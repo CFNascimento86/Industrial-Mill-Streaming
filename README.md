@@ -8,6 +8,7 @@ Utilizando como domínio de referência a **Área de Extração** de uma usina s
 
 O objetivo não é apenas demonstrar tecnologias, mas apresentar uma abordagem estruturada para modelar processos industriais, organizar eventos de negócio e construir soluções escaláveis para a Indústria 4.0.
 
+![Arquitetura geral](https://github.com/CFNascimento86/Industrial-Mill-Streaming/blob/main/images/digital%20twin.jpg)
 ---
 
 ## Sobre o Projeto
@@ -79,7 +80,6 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 
 **Explore a documentação para conhecer a modelagem do domínio, a arquitetura da solução e as decisões de engenharia que sustentam o projeto.**
 ````
-│
 ├── README.md     
 │
 ├── docs/
