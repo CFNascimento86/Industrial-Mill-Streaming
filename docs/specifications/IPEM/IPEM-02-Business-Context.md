@@ -20,18 +20,19 @@ Entre essas áreas, a Extração representa um dos primeiros e mais relevantes p
 
 ### 3. Domínio de Referência
 
-O IMS adota como domínio de referência o Sistema de Moagem, responsável pela extração do caldo da cana-de-açúcar.
+O IMS adota como domínio de referência o Sistema de Moagem, responsável pela extração do caldo da cana-de-açúcar. Porque reúne em um único processo, praticamente todos os desafios que uma arquitetura de Engenharia de Dados Industrial precisa enfrentar.
 
 A escolha desse sistema fundamenta-se em critérios técnicos.
 
 *A operação apresenta:*
 
-- elevado volume de variáveis de processo;
-- grande diversidade de instrumentos industriais;
-- eventos operacionais frequentes;
-- necessidade de monitoramento contínuo;
-- forte integração entre automação e sistemas corporativos;
-- geração permanente de indicadores operacionais.
+- aquisição contínua de dados;
+- alta densidade de instrumentação;
+- integração OT/IT;
+- eventos operacionais;
+- necessidade de disponibilidade;
+- geração de KPIs;
+- decisões quase em tempo real.
 
 Sob a perspectiva da Engenharia de Dados Industrial, essas características fazem da moagem um domínio representativo para estudos de aquisição, modelagem e processamento de dados industriais.
 
