@@ -88,7 +88,7 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 │   │      └── IPEM/
 │   │          ├── IPEM-01-Introduction.md
 |   │          ├── IPEM-02-Business-Context.md
-|   │          ├── IPEM-03-Plant-Model.md
+|   │          ├── IPEM-03-Reference-Domain.md
 |   │          ├── IPEM-04-Process-Model.md
 |   │          ├── IPEM-05-Asset-Model.md
 |   │          ├── IPEM-06-Instrumentation-Model.md
