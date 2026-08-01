@@ -86,18 +86,24 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 │   │
 │   ├── specifications/
 │   │      └── IPEM/
-│   │          ├── IPEM-01-Introduction.md
-|   │          ├── IPEM-02-Business-Context.md
-|   │          ├── IPEM-03-Reference-Domain.md
-|   │          ├── IPEM-04-Process-Model.md
-|   │          ├── IPEM-05-Asset-Model.md
-|   │          ├── IPEM-06-Instrumentation-Model.md
-|   │          ├── IPEM-07-Telemetry-Model.md
-|   │          ├── IPEM-08-Event-Model.md
-|   │          └── IPEM-09-KPI-Model.md    
+│   │          ├── IPEM-01 - Introduction.md
+|   │          ├── IPEM-02 - Business-Context.md
+|   │          ├── IPEM-03 - Reference-Domain.md
+|   │          ├── IPEM-04 - Process-Model.md
+|   │          ├── IPEM-05 - Asset-Model.md
+|   │          ├── IPEM-06 - Instrumentation-Model.md
+|   │          ├── IPEM-07 - Telemetry-Model.md
+|   │          ├── IPEM-08 - Event-Model.md
+|   │          └── IPEM-09 - KPI-Model.md    
 |   |
 │   ├── architecture/
-│   │
+│   │       ├── ARCH-01 — Overall Architecture.md
+|   │       ├── ARCH-02 — Data Architecture.md
+|   │       ├── ARCH-03 — Integration Architecture.md
+|   │       ├── ARCH-04 — Infrastructure Architecture.md
+|   │       ├── ARCH-05 — Security Architecture.md
+|   │       └── ARCH-06 — Analytics Architecture.md
+|   │
 │   ├── adr/
 │   │
 |   ├── data-model/
