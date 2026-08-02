@@ -1,6 +1,6 @@
 ### 1. Introdução
 
-O **Overall Architecture** estabelece a visão arquitetural de alto nível do Industrial Mill Streaming — IMS.
+O **Overall Architecture** estabelece a visão arquitetural de alto nível do Industrial Mill Streaming (IMS).
 
 Este documento define como as capacidades da plataforma devem ser organizadas para transformar dados provenientes de uma infraestrutura industrial existente em informações contextualizadas, governadas e disponíveis para processamento, análise e tomada de decisão.
 
@@ -84,23 +84,6 @@ O documento contempla:
 * consumo analítico;
 * rastreabilidade entre as camadas.
 
-O documento não contempla:
-
-* especificação de instrumentos;
-* dimensionamento de controladores;
-* projeto de redes industriais;
-* configuração de PLCs;
-* desenvolvimento de estratégias de controle;
-* definição de intertravamentos;
-* racionalização de alarmes;
-* seleção detalhada de produtos;
-* configuração de infraestrutura;
-* desenvolvimento de pipelines específicos;
-* definição física de tabelas e arquivos;
-* implementação de dashboards.
-
-Esses temas pertencem a outras disciplinas ou serão detalhados em documentos arquiteturais, registros de decisão e especificações posteriores.
-
 ---
 
 ### 5. Princípio Arquitetural
@@ -161,7 +144,6 @@ Pertencem à arquitetura IMS:
 * organização lógica das informações;
 * persistência e processamento;
 * governança e rastreabilidade;
-* identificação de problemas na plataforma de dados;
 * disponibilização para aplicações analíticas;
 * suporte à investigação e à tomada de decisão.
 
@@ -269,7 +251,7 @@ Identidade técnica variável:
 DB101.DBD4
 
 Identidade lógica estável:
-Cozedor 01 / Temperatura da Massa
+1º Terno / Nível do Donelly
 ```
 
 A origem técnica pode ser alterada sem modificar o significado da entidade lógica.
@@ -368,9 +350,8 @@ Responde à pergunta:
 
 Exemplos:
 
-* temperatura do Cozedor 01;
+* temperatura da embebição;
 * pressão de vapor;
-* estado de uma batelada;
 * vazão de alimentação;
 * disponibilidade de um ativo.
 
@@ -383,14 +364,13 @@ Responde à pergunta:
 
 Exemplos:
 
-* temperatura média por batelada;
 * consumo específico por tonelada;
 * disponibilidade por turno;
 * duração média do ciclo;
 * impacto de paradas no OEE.
 
 
-*8.5 Relacionamento entre as representações*
+*8.5 - Relacionamento entre as representações*
 
 ```text
 Representação Física
@@ -414,10 +394,10 @@ PLC-01 / DB101 / Offset 4
 Leitura por protocolo industrial / REAL
         │
         ▼
-Cozedor 01 / Temperatura da Massa / °C
+Turbina 01 / Temperatura do Mancal / °C
         │
         ▼
-Temperatura média por fase da batelada
+Temperatura média por Turno
 ```
 
 A arquitetura deve preservar o relacionamento entre todas essas representações.
@@ -480,7 +460,7 @@ O diagrama representa a progressão lógica da informação.
 
 Para fins de organização, a arquitetura IMS é dividida em domínios lógicos.
 
-*10.1 Industrial Source Domain*
+*10.1 - Industrial Source Domain*
 
 Representa os sistemas e componentes industriais que originam ou disponibilizam dados.
 
@@ -495,12 +475,10 @@ Inclui conceitualmente:
 * sistemas de gestão de alarmes;
 * aplicações industriais existentes.
 
-Esse domínio não é controlado pela arquitetura IMS.
-
-Ele constitui sua principal origem de informação.
+Esse domínio não é controlado pela arquitetura IMS, ele constitui sua principal origem de informação.
 
 
-*10.2 Edge and Acquisition Domain*
+*10.2 - Edge and Acquisition Domain*
 
 Responsável por estabelecer a interface entre as fontes industriais e a plataforma de dados.
 
@@ -519,7 +497,7 @@ Suas responsabilidades incluem:
 Esse domínio concentra as dependências técnicas das fontes.
 
 
-*10.3 Integration and Communication Domain*
+*10.3 - Integration and Communication Domain*
 
 Responsável pelo transporte e intercâmbio das informações entre as capacidades da arquitetura.
 
@@ -537,7 +515,7 @@ Suas responsabilidades incluem:
 Esse domínio pode suportar diferentes padrões de comunicação conforme a natureza do dado e do caso de uso.
 
 
-*10.4 Storage Domain*
+*10.4 - Storage Domain*
 
 Responsável pela persistência dos dados ao longo de seus diferentes níveis de transformação.
 
@@ -553,12 +531,10 @@ Suas responsabilidades incluem:
 * disponibilidade para processamento;
 * manutenção da rastreabilidade.
 
-O armazenamento não deve ser tratado como uma única estrutura universal.
-
-Diferentes necessidades podem exigir diferentes modelos de persistência.
+O armazenamento não deve ser tratado como uma única estrutura universal. Pois, diferentes necessidades podem exigir diferentes modelos de persistência.
 
 
-*10.5 Processing Domain*
+*10.5 - Processing Domain*
 
 Responsável por transformar dados adquiridos em informações contextualizadas e utilizáveis.
 
@@ -579,7 +555,7 @@ Suas responsabilidades incluem:
 O processamento deve preservar a origem e as transformações realizadas.
 
 
-*10.6 Information Model Domain*
+*10.6 - Information Model Domain*
 
 Responsável por materializar os conceitos definidos no IPEM dentro da arquitetura de dados.
 
@@ -599,7 +575,7 @@ Esse domínio organiza as representações de:
 O Information Model Domain constitui o elo entre a Engenharia de Processo e a arquitetura técnica.
 
 
-*10.7 Governance and Observability Domain*
+*10.7 - Governance and Observability Domain*
 
 Responsável por garantir que a plataforma permaneça compreensível, rastreável, segura e operacionalmente observável.
 
@@ -618,12 +594,10 @@ Suas responsabilidades incluem:
 * observabilidade de pipelines;
 * acompanhamento de latência e disponibilidade.
 
-A governança e a observabilidade são capacidades transversais.
-
-Elas não devem ser tratadas como uma etapa executada apenas ao final do fluxo.
+A governança e a observabilidade são capacidades transversais e elas não devem ser tratadas como uma etapa executada apenas ao final do fluxo.
 
 
-*10.8 Data Serving Domain*
+*10.8 - Data Serving Domain*
 
 Responsável por disponibilizar informações para diferentes consumidores.
 
@@ -641,7 +615,7 @@ Suas responsabilidades incluem:
 Esse domínio deve evitar que consumidores acessem diretamente estruturas técnicas de aquisição ou armazenamento bruto.
 
 
-*10.9 Analytics and Decision Domain*
+*10.9 - Analytics and Decision Domain*
 
 Responsável pelo uso das informações produzidas pela plataforma.
 
@@ -732,7 +706,7 @@ O processo industrial deve permanecer operacional independentemente da disponibi
 
 A arquitetura deve suportar diferentes padrões de fluxo.
 
-*13.1 Fluxo Contínuo*
+*13.1 - Fluxo Contínuo*
 
 Adequado para telemetrias e eventos que exigem baixa latência.
 
@@ -749,7 +723,7 @@ Disponibilização
 ```
 
 
-*13.2 Fluxo em Lote*
+*13.2 - Fluxo em Lote*
 
 Adequado para consolidações periódicas, históricos, integrações com sistemas legados e processamento analítico.
 
@@ -766,7 +740,7 @@ Consumo
 ```
 
 
-*13.3 Fluxo Orientado a Eventos*
+*13.3 - Fluxo Orientado a Eventos*
 
 Adequado para acontecimentos relevantes do processo ou da própria plataforma.
 
@@ -780,8 +754,7 @@ Publicação
 Consumidores interessados
 ```
 
-
-*13.4 Fluxo de Dados Industriais*
+*13.4 - Fluxo de Dados Industriais*
 
 Representa a progressão lógica principal da informação.
 
@@ -795,7 +768,7 @@ Dado Adquirido
 Dado Contextualizado
         │
         ▼
-Telemetria
+    Telemetria
         │
         ▼
       Evento
@@ -815,26 +788,26 @@ Os diferentes padrões podem coexistir na mesma arquitetura.
 
 O desacoplamento é necessário para permitir que componentes, tecnologias e consumidores evoluam de maneira independente.
 
-*14.1 Desacoplamento da Fonte*
+*14.1-  Desacoplamento da Fonte*
 
 Os consumidores não devem acessar diretamente PLCs, blocos de memória ou estruturas internas de sistemas supervisórios.
 
 
-*14.2 Desacoplamento do Transporte*
+*14.2 - Desacoplamento do Transporte*
 
 O modelo conceitual da informação não deve depender do mecanismo utilizado para transportá-la.
 
 Uma telemetria continua representando a mesma observação, independentemente de ser transportada por comunicação síncrona, mensageria, arquivo ou integração em lote.
 
 
-*14.3 Desacoplamento do Armazenamento*
+*14.3 - Desacoplamento do Armazenamento*
 
 Consumidores não devem depender desnecessariamente da organização interna das estruturas de persistência.
 
 Interfaces de consumo devem proteger aplicações contra alterações nos modelos físicos.
 
 
-*14.4 Desacoplamento do Consumo*
+*14.4 - Desacoplamento do Consumo*
 
 Novos consumidores devem poder utilizar informações existentes sem provocar mudanças nas fontes industriais.
 
@@ -972,54 +945,54 @@ Essas restrições devem orientar os documentos arquiteturais subsequentes e os 
 
 A arquitetura IMS deve buscar os seguintes atributos de qualidade.
 
-*19.1 Disponibilidade*
+*19.1 - Disponibilidade*
 
 A plataforma deve manter suas capacidades essenciais compatíveis com os requisitos de cada caso de uso.
 
 
-*19.2 Resiliência*
+*19.2 - Resiliência*
 
 Falhas em componentes de dados não devem comprometer o controle do processo industrial.
 
 Quando aplicável, a plataforma deve ser capaz de recuperar e reprocessar informações.
 
 
-*19.3 Escalabilidade*
+*19.3 - Escalabilidade*
 
 A arquitetura deve permitir aumento de volume, frequência, número de ativos e consumidores sem exigir reconstrução completa.
 
 
-*19.4 Interoperabilidade*
+*19.4 - Interoperabilidade*
 
 A plataforma deve integrar fontes e consumidores heterogêneos por meio de interfaces e contratos bem definidos.
 
 
-*19.5 Manutenibilidade*
+*19.5 - Manutenibilidade*
 
 Componentes e modelos devem poder evoluir de forma controlada e desacoplada.
 
 
-*19.6 Observabilidade*
+*19.6 - Observabilidade*
 
 O estado dos pipelines, integrações, processamentos e serviços deve ser verificável.
 
 
-*19.7 Segurança*
+*19.7 - Segurança*
 
 A arquitetura deve aplicar controle de acesso, segmentação, auditoria e proteção adequada ao contexto industrial.
 
 
-*19.8 Qualidade dos Dados*
+*19.8 - Qualidade dos Dados*
 
 A plataforma deve identificar e tornar visíveis problemas de completude, validade, consistência, atualidade e unicidade.
 
 
-*19.9 Rastreabilidade*
+*19.9 - Rastreabilidade*
 
 As transformações e origens devem permanecer identificáveis durante todo o ciclo de vida dos dados.
 
 
-*19.10 Portabilidade*
+*19.10 - Portabilidade*
 
 Sempre que tecnicamente e economicamente apropriado, as capacidades lógicas devem reduzir dependências desnecessárias de um único produto ou fornecedor.
 
@@ -1037,23 +1010,6 @@ O ARCH-01 estabelece:
 * as fronteiras entre disciplinas;
 * os direcionadores de decisão;
 * os requisitos gerais de qualidade.
-
-O ARCH-01 não estabelece:
-
-* produtos específicos;
-* fornecedores;
-* serviços cloud;
-* topologias físicas detalhadas;
-* dimensionamento de infraestrutura;
-* contratos de mensagens;
-* schemas;
-* tabelas;
-* nomes de tópicos;
-* políticas detalhadas de segurança;
-* fórmulas de indicadores;
-* configurações de implantação.
-
-Esses elementos serão tratados nos documentos subsequentes e nos respectivos ADRs.
 
 ---
 
@@ -1074,7 +1030,7 @@ Esses elementos serão tratados nos documentos subsequentes e nos respectivos AD
 
 ### 22. Considerações Finais
 
-O ARCH-01 estabelece a arquitetura IMS como uma camada lógica construída sobre uma realidade industrial previamente existente.
+O ARCH-01 estabelece a arquitetura IMS como uma camada lógica construída sobre uma realidade industrial existente.
 
 Seu propósito não é redesenhar a automação, substituir sistemas de controle ou redefinir o conhecimento operacional da planta.
 
@@ -1094,9 +1050,7 @@ Arquitetura Lógica IMS
 Realidade Informacional e Analítica
 ```
 
-A arquitetura não elimina a complexidade industrial.
-
-Ela a encapsula, organiza e torna utilizável.
+A arquitetura não elimina a complexidade industrial, ela a encapsula, organiza e torna utilizável.
 
 Ao adotar os princípios **Logical Abstraction Over Existing Infrastructure**, **Brownfield by Design**, **Non-Intrusive Integration**, **Source Decoupling**, **Traceability by Design**, **Engineering Knowledge Preservation** e **Context Before KPI**, o IMS estabelece uma base coerente para a digitalização de ambientes industriais reais.
 
