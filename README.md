@@ -35,13 +35,13 @@ Aquisição de Dados
 Streaming de Eventos
         │
         ▼
-Persistência
+   Persistência
         │
         ▼
-Disponibilização
+ Disponibilização
         │
         ▼
-Consumo dos Dados
+ Consumo dos Dados
 ```
 
 Cada etapa representa uma responsabilidade arquitetural específica e permanece desacoplada das tecnologias utilizadas em sua implementação.
@@ -97,6 +97,7 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |   │          └── IPEM-09 - KPI-Model.md    
 |   |
 │   ├── architecture/
+|   |       ├── ARCH-00 — Architecture Philosophy.md
 │   │       ├── ARCH-01 — Overall Architecture.md
 |   │       ├── ARCH-02 — Data Architecture.md
 |   │       ├── ARCH-03 — Integration Architecture.md
