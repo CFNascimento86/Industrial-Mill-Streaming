@@ -56,9 +56,7 @@ A decisão considera os seguintes direcionadores:
 * escalabilidade do armazenamento;
 * controle do crescimento do banco operacional;
 * eficiência de custo para histórico de longo prazo;
-* possibilidade de reprocessamento;
-* utilização de tecnologias abertas quando aplicável;
-* capacidade de evolução para workloads especializados de séries temporais.
+* possibilidade de reprocessamento.
 
 ---
 
@@ -102,11 +100,7 @@ PostgreSQL
    ▼
 HISTORICAL DATA
 ADLS
-   │
-   ▼
-DEEP HISTORICAL DATA
-Archive
-````
+ ````
 Essa progressão não representa necessariamente camadas de transformação de dados.
 
 Ela representa diferentes responsabilidades de armazenamento ao longo do ciclo de vida da informação.
@@ -158,8 +152,7 @@ O ADLS terá como responsabilidades principais:
 * armazenamento de grande volume;
 * redução da pressão de crescimento sobre o banco operacional;
 * suporte a análises históricas futuras;
-* disponibilização de dados para workloads analíticos;
-* aplicação de políticas de lifecycle.
+* disponibilização de dados para workloads analíticos.
   
 ````
 PostgreSQL
@@ -173,7 +166,6 @@ Historical Export
       │
       ├── Hot
       ├── Cool
-      ├── Cold
       └── Archive
 ````
 Os níveis específicos e seus períodos de permanência serão definidos posteriormente conforme padrões reais de acesso e requisitos de custo.
@@ -182,34 +174,7 @@ O Azure Storage permite automatizar transições entre tiers por meio de Lifecyc
 
 ---
 
-### 7. Archive Strategy
-
-O tier Archive será reservado a dados históricos de acesso excepcionalmente raro.
-
-Ele não será tratado como armazenamento histórico de consulta imediata.
-
-Dados no Archive permanecem offline e precisam ser reidratados para um tier online antes da leitura. Na prioridade padrão, esse processo pode levar várias horas e, para determinados objetos, até aproximadamente 15 horas.
-
-Portanto:
-````
-Recent History
-     │
-     ▼
-PostgreSQL
-     │
-     ▼
-Historical
-ADLS Online Tiers
-     │
-     ▼
-Deep Historical
-ADLS Archive
-````
-Archive representa otimização de custo para histórico profundo, não extensão direta do armazenamento operacional.
-
----
-
-### 8. Persistence Flow
+### 7. Persistence Flow
 
 O serviço de aquisição não deverá persistir diretamente no PostgreSQL ou ADLS.
 
@@ -242,7 +207,7 @@ Essa decisão preserva o desacoplamento estabelecido no ADR-01.
 
 ---
 
-### 9. Replay and Recovery
+### 8. Replay and Recovery
 
 A retenção de eventos do Kafka permitirá reprocessamento dentro da janela disponível de retenção.
 
@@ -268,13 +233,11 @@ Persistence Consumer
   ▼
 PostgreSQL
 ````
-A implementação deverá garantir idempotência suficiente para evitar persistências duplicadas durante cenários de replay.
-
-Essa capacidade não substitui uma estratégia de backup.
+A implementação deverá garantir idempotência suficiente para evitar persistências duplicadas durante cenários de replay. Essa capacidade não substitui uma estratégia de backup.
 
 ---
 
-### 10. Historical Data and Backup
+### 9. Historical Data and Backup
 
 O IMS distingue explicitamente Historical Storage de Backup.
 
@@ -312,3 +275,143 @@ As duas responsabilidades não devem ser tratadas como equivalentes.
 
 ---
 
+### 10. Rationale
+
+A decisão estabelece responsabilidades claras:
+
+| Tecnologia            | Responsabilidade                                         |
+| --------------------- | -------------------------------------------------------- |
+| **Apache Kafka**      | Event streaming, retenção operacional e replay           |
+| **PostgreSQL**        | Persistência operacional e histórico recente consultável |
+| **ADLS**              | Persistência histórica de longo prazo                    |
+| **Backup Repository** | Recuperação e continuidade                               |
+
+A arquitetura evita transformar qualquer tecnologia em solução universal.
+
+````
+Event
+  │
+  ▼
+Kafka
+  │
+  ▼
+Operational Information
+  │
+  ▼
+PostgreSQL
+  │
+  ▼
+Historical Information
+  │
+  ▼
+ADLS
+  │
+  ▼
+Archive
+````
+Cada transição ocorre porque a finalidade da informação mudou.
+
+---
+
+### 11. Consequences
+*11.1 - Positive*
+
+A decisão proporciona:
+
+* controle do crescimento do banco operacional;
+* armazenamento histórico escalável;
+* consultas operacionais desacopladas do histórico profundo;
+* suporte futuro a analytics e ciência de dados;
+* capacidade de replay.
+
+.
+
+*11.2 - Negative*
+
+A decisão introduz:
+
+* múltiplos mecanismos de armazenamento;
+* necessidade de movimentação de dados entre PostgreSQL e ADLS;
+* necessidade de controle de consistência;
+* maior responsabilidade sobre pipelines de persistência;
+* dependência de infraestrutura cloud para histórico de longo prazo.
+
+.
+  
+*11.3 - Risks / Trade-offs*
+
+A distribuição da persistência aumenta a complexidade em relação a uma estratégia baseada em banco único.
+
+Esse trade-off é conscientemente aceito.
+
+O IMS aceita maior complexidade na gestão do ciclo de vida da informação para separar eficiência operacional, preservação histórica e custo de armazenamento.
+
+---
+
+### 12. Boundaries
+
+Este ADR não define:
+
+* estratégia definitiva de particionamento;
+* formato físico dos arquivos históricos;
+* período de retenção no PostgreSQL;
+* estrutura de diretórios no ADLS;
+* políticas de backup.
+
+Esses elementos serão definidos no Data Model, na implementação ou em ADRs posteriores quando possuírem relevância arquitetural própria.
+
+---
+
+### 13. Related Architecture
+
+| Documento   | Relação                                                |
+| ----------- | ------------------------------------------------------ |
+| **ARCH-00** | Estabelece tecnologia como consequência da arquitetura |
+| **ARCH-02** | Define Progressive Information Enrichment              |
+| **ARCH-04** | Distribui capacidades conforme responsabilidade        |
+| **ARCH-05** | Estabelece rastreabilidade e confiança na informação   |
+| **ARCH-06** | Define disponibilização contextualizada para consumo   |
+| **ADR-01**  | Define Event-Driven Integration e Apache Kafka         |
+| **ADR-02**  | Define Industrial Data Acquisition                     |
+
+---
+
+### 14. Considerações Finais
+
+O ADR-03 estabelece que persistência industrial não deve ser tratada como uma responsabilidade única.
+
+O IMS distingue fluxo, operação, histórico e recuperação, atribuindo a cada necessidade uma responsabilidade arquitetural específica.
+
+````
+S7-1500
+   │
+ OPC UA
+   │
+   ▼
+Acquisition
+   │
+   ▼
+ Kafka
+   │
+   ▼
+Persistence Consumer
+   │
+   ▼
+PostgreSQL
+   │
+   ▼
+Historical Export
+   │
+   ▼
+ ADLS
+   │
+   ▼
+Lifecycle
+   │
+   ├── Hot
+   ├── Cool
+   └── Archive
+````
+A arquitetura permanece preparada para incorporar capacidades especializadas de séries temporais quando evidências demonstrarem sua necessidade, sem antecipar complexidade.
+
+> Persistir não significa simplesmente armazenar. Significa preservar a informação no lugar adequado, pelo tempo adequado e para a finalidade adequada.
