@@ -233,7 +233,6 @@ A escolha considera:
 
 * schema explícito;
 * tipagem;
-* serialização eficiente;
 * suporte à evolução de schemas;
 * interoperabilidade;
 * ampla integração com ecossistemas orientados a eventos;
@@ -334,3 +333,198 @@ A política específica de compatibilidade backward, forward ou full será estab
 
 ---
 
+### 11. Contract Validation
+
+A validade de um evento não deverá depender apenas da capacidade do produtor de publicá-lo no Kafka.
+
+O fluxo deverá considerar validação contra o contrato correspondente.
+````
+Producer
+   │
+   ▼
+Contract Validation
+   │
+   ├── Invalid ───► Rejected / Controlled Handling
+   │
+   ▼
+ Valid
+   │
+   ▼
+ Kafka
+````
+Da mesma forma, consumidores deverão utilizar contratos para interpretar corretamente os eventos recebidos.
+
+Essa disciplina reduz a propagação de mensagens estruturalmente inconsistentes pela plataforma.
+
+---
+
+### 12. Relationship with Progressive Information Enrichment
+
+Os contratos deverão respeitar o princípio Progressive Information Enrichment estabelecido no ARCH-02.
+
+Isso significa que diferentes estágios do IMS poderão produzir informações com níveis distintos de contextualização.
+````
+Observation
+     │
+     ▼
+Structured Telemetry
+     │
+     ▼
+Contextualized Information
+     │
+     ▼
+Analytical Information
+````
+Cada estágio poderá possuir contratos específicos conforme sua responsabilidade.
+
+O objetivo não será criar um único schema universal para toda a plataforma.
+
+Essa abordagem permite enriquecimento progressivo sem destruir rastreabilidade ou significado.
+
+---
+
+### 13. Rationale
+
+A decisão estabelece uma cadeia explícita entre significado, estrutura e transporte.
+````
+Industrial Meaning
+       │
+       ▼
+Information Model
+       │
+       ▼
+ Event Contract
+       │
+       ▼
+  Avro Schema
+       │
+       ▼
+Schema Registry
+       │
+       ▼
+     Kafka
+       │
+       ▼
+   Consumers
+````
+Cada elemento possui responsabilidade distinta.
+
+| Elemento              | Responsabilidade          |
+| --------------------- | ------------------------- |
+| **Information Model** | Significado industrial    |
+| **Event Contract**    | Interface compartilhada   |
+| **Apache Avro**       | Representação estrutural  |
+| **Schema Registry**   | Governança e evolução     |
+| **Apache Kafka**      | Transporte e distribuição |
+
+Essa separação evita que tecnologia, estrutura e semântica sejam tratadas como conceitos equivalentes.
+
+---
+
+### 14. Consequences
+*14.1 - Positive*
+
+A decisão proporciona:
+
+* contratos explícitos;
+* versionamento;
+* redução de ambiguidades;
+* menor acoplamento entre produtores e consumidores;
+* governança centralizada;
+* preservação do contexto industrial.
+
+.
+
+*14.2 - Negative*
+
+A decisão introduz:
+
+* necessidade de manutenção dos schemas;
+* disciplina de versionamento;
+* novo componente de infraestrutura;
+* necessidade de governança de contratos;
+* maior rigor no desenvolvimento de produtores e consumidores;
+* necessidade de tratar compatibilidade durante evolução.
+
+.
+
+*14.3 - Risks / Trade-offs*
+
+A adoção de contratos explícitos aumenta a disciplina e a complexidade de evolução das interfaces.
+
+Esse trade-off é conscientemente aceito.
+
+> O IMS aceita maior disciplina na produção e evolução dos eventos para reduzir ambiguidade e acoplamento entre capacidades independentes.
+
+---
+
+### 15. Boundaries
+
+*Este ADR não define:*
+
+* schemas Avro completos;
+* tipos definitivos de eventos;
+* estrutura definitiva dos payloads;
+* estratégia de particionamento Kafka;
+* IDs definitivos dos ativos;
+* política universal de backward, forward ou full compatibility.
+
+Esses elementos serão definidos pelo Event Model, Data Model, implementação ou decisões arquiteturais posteriores quando necessário.
+
+---
+
+### 16. Related Architecture
+
+| Documento   | Relação                                                          |
+| ----------- | ---------------------------------------------------------------- |
+| **IPEM-07** | Estabelece o Telemetry Model                                     |
+| **IPEM-08** | Define Event Model e preservação do conhecimento de engenharia   |
+| **ARCH-00** | Estabelece tecnologia como consequência da arquitetura           |
+| **ARCH-02** | Define Progressive Information Enrichment                        |
+| **ARCH-03** | Define comunicação e desacoplamento entre capacidades            |
+| **ARCH-05** | Estabelece identidade, rastreabilidade e confiança da informação |
+| **ADR-01**  | Define Event-Driven Integration e Apache Kafka                   |
+| **ADR-02**  | Define Industrial Data Acquisition                               |
+| **ADR-03**  | Define Industrial Data Persistence                               |
+
+---
+
+### 17. Considerações Finais
+
+O ADR-04 estabelece que o desacoplamento arquitetural do IMS não termina no transporte das mensagens.
+
+Para que capacidades independentes possam evoluir sem perder consistência, a informação compartilhada deverá possuir estrutura explícita, identidade preservada, contexto mínimo e evolução governada.
+````
+Industrial Process
+       │
+       ▼
+  Acquisition
+       │
+       ▼
+Information Model
+       │
+       ▼
+ Event Contract
+       │
+       ▼
+  Apache Avro
+       │
+       ▼
+Apicurio Registry
+       │
+       ▼
+ Apache Kafka
+       │
+       ├──► Processing
+       ├──► Persistence
+       └──► Analytics
+````
+Apache Avro materializa o contrato estrutural.
+
+Apicurio Registry governa sua existência e evolução.
+
+Kafka distribui os eventos.
+
+O modelo informacional preserva seu significado industrial.
+
+> Dados podem atravessar tecnologias diferentes. Seu significado não pode se perder durante o caminho.
