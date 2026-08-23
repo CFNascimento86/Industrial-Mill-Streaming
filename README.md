@@ -106,6 +106,15 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |   │       └── ARCH-06 — Analytics Architecture.md
 |   │
 │   ├── adr/
+|   |    ├── ADR-00 - Architecture-Decision.md
+|   |    ├── ADR-01 - Event-Driven-Integration.md 
+|   │    ├── ADR-02 - Industrial-Data-Aquisition.md
+|   │    ├── ADR-03 - Industrial-Data-Persistence.md
+|   │    ├── ADR-04 - Industrial-Information-Contracts.md
+|   │    ├── ADR-05 - Event-Processing.md
+|   │    ├── ADR-06 - Kafka-Event-Topology.md
+|   │    ├── ADR-07 - Containerized.md
+|   │    └── ADR-08 - Data-Platform-Observability.md
 │   │
 |   ├── data-model/
 │   │
