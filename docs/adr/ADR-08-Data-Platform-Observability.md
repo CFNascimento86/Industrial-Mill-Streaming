@@ -16,7 +16,7 @@
 
 O Industrial Mill Streaming (IMS) é composto por diferentes serviços responsáveis por aquisição, integração, processamento, persistência e disponibilização de informações industriais.
 
-À medida que essas capacidades passam a operar de forma distribuída, falhas podem ocorrer em diferentes pontos do fluxo.
+À medida que essas capacidades passam a operar de forma distribuída, falhas podem ocorrer em diferentes pontos.
 
 Exemplos incluem:
 
@@ -577,7 +577,7 @@ Condições Operacionais
 
 ---
 
-##3 17. Structured Logging Strategy
+### 17. Structured Logging Strategy
 
 A implementação inicial utilizará logs estruturados produzidos diretamente pelos serviços.
 
@@ -695,7 +695,7 @@ A arquitetura não exige que todos os componentes publiquem as mesmas métricas.
 
 ---
 
-## 20. Rationale
+### 20. Rationale
 
 A decisão procura equilibrar:
 
