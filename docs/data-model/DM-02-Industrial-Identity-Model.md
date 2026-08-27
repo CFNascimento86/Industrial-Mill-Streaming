@@ -6,8 +6,6 @@ Esses elementos podem possuir diferentes representações técnicas em PLCs, pro
 
 O DM-02 estabelece como **Process, Asset e Variable mantêm identidade industrial estável**, independentemente das tecnologias utilizadas para representá-los.
 
-> *Industrial identity describes what something is. Technical identity describes where or how it is represented.*
-
 ---
 
 ### 2. Princípios de Identidade
@@ -44,9 +42,7 @@ Stable Identity
 
 ### 3. Industrial Identity
 
-Industrial Identity representa a identidade lógica e semanticamente significativa de uma entidade dentro do domínio industrial.
-
-Ela deverá permanecer independente de elementos como:
+Industrial Identity representa a identidade lógica e semanticamente significativa de uma entidade dentro do domínio industrial. Ela deverá permanecer independente de elementos como:
 
 ````
 PLC Address
@@ -216,9 +212,7 @@ poderá fornecer um caminho semântico como:
 ````
 milling/mill-01/hydraulic-system/hydraulic-pressure
 ````
-Esse caminho é útil para navegação e interpretação, mas não deverá constituir sozinho a identidade definitiva da entidade.
-
-Uma reorganização hierárquica poderá alterar o caminho sem significar que a entidade industrial deixou de ser a mesma.
+Esse caminho é útil para navegação e interpretação, mas não deverá constituir sozinho a identidade definitiva da entidade. Portanto, uma reorganização hierárquica poderá alterar o caminho sem significar que a entidade industrial deixou de ser a mesma.
 
 ---
 
@@ -290,8 +284,7 @@ O modelo estabelece uma fronteira explícita entre domínio industrial e domíni
                        │
                      SOURCE
 ````
-Source, definido no DM-01 como entidade técnica, representa o mecanismo pelo qual determinada informação é obtida.
-
+Source, definido no DM-01 como entidade técnica, representa o mecanismo pelo qual determinada informação é obtida. 
 Uma Variable poderá conceitualmente possuir diferentes Sources ao longo de seu ciclo de vida:
 ````
                    ┌── OPC UA Source
