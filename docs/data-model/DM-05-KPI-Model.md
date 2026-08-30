@@ -41,10 +41,10 @@ Resultados somente deverão ser comparados quando definição, escopo, referênc
 Conceitualmente:
 
 ```text
-Telemetry
-    +
-  Event
-    +
+    Telemetry
+        +
+      Event
+        +
 Operational Context
         │
         ▼
@@ -260,8 +260,6 @@ para:
 ````
 How much, under which conditions?
 ````
-Context qualifies KPI interpretation; it does not necessarily redefine KPI identity.
-
 Assim, diferentes contextos não exigem necessariamente a criação de diferentes indicadores.
 ````
                   ┌── Normal Load
@@ -348,7 +346,7 @@ KPI possui relevância operacional ou de negócio explicitamente reconhecida.
 
 ---
 
-12. KPI × Event
+### 12. KPI × Event
 
 Event e KPI podem representar informações derivadas, mas possuem naturezas distintas.
 ````
@@ -433,3 +431,179 @@ A rastreabilidade poderá ser preservada por meio de elementos como:
 * lineage de processamento.
 
 ---
+
+### 15. Analytical Comparability
+
+Dois resultados não deverão ser considerados comparáveis apenas porque possuem o mesmo nome de KPI.
+
+Por exemplo:
+````
+94.7%  vs  92.1%
+````
+somente representa uma comparação válida quando houver compatibilidade suficiente entre:
+````
+KPI Definition
+Calculation Semantics
+Industrial Scope
+Temporal Reference
+Analytical Grain
+Relevant Context
+````
+Conceitualmente:
+````
+Result A ──┐
+           │
+           ├──► Semantic Compatibility
+           │            │
+Result B ──┘            ▼
+                  Valid Comparison
+````
+> Analytical comparability requires semantic compatibility.
+
+Essa regra evita comparações entre resultados que possuem aparência semelhante, mas significados diferentes.
+
+---
+
+### 16. Modelo Conceitual Analítico
+
+O núcleo conceitual do DM-05 pode ser representado como:
+````
+                INDUSTRIAL EVIDENCE
+
+Telemetry ──────────────┐
+Event ──────────────────┤
+Operational Context ────┤
+                        │
+                        ▼
+                   DERIVATION
+                        │
+                        ▼
+                   KPI RESULT
+                  ┌─────┼─────┐
+                  │     │     │
+                  ▼     ▼     ▼
+                Value  Time  Scope
+                         │
+                         ▼
+                 Analytical Grain
+````
+A dimensão semântica pode ser representada como:
+````
+KPI Identity
+     │
+     ▼
+KPI Definition
+     │
+     ├── Meaning
+     ├── Calculation Semantics
+     └── Version
+             │
+             ▼
+         KPI Result
+          ┌──┼───────────┐
+          │  │           │
+          ▼  ▼           ▼
+       Context       Analytical
+       Quality       Traceability
+````
+O modelo conceitual completo começa então a formar uma cadeia de enriquecimento:
+````
+PROCESS
+   │
+   ▼
+ ASSET
+   │
+   ▼
+VARIABLE
+   │
+   ▼
+TELEMETRY
+   │
+   ▼
+ EVENT
+   │
+   ├────────────────┐
+   ▼                │
+OPERATIONAL         │
+CONTEXT             │
+   │                │
+   └───────┬────────┘
+           ▼
+          KPI
+           │
+           ▼
+Analytical Understanding
+````
+Essa representação descreve uma progressão semântica possível, e não um pipeline obrigatório.
+
+Nem todo KPI depende de Event.
+
+Nem toda Telemetry participa de um KPI.
+
+Nem todo Event estabelece Operational Context.
+
+As relações existem conforme o significado e a necessidade analítica.
+
+---
+
+### 17. Boundaries
+
+O DM-05 não define:
+
+* fórmulas definitivas de KPI;
+* estrutura física de KPI Definition e KPI Result;
+* Primary Keys ou Foreign Keys;
+* tabelas PostgreSQL;
+* views ou materialized views;
+* Star Schema;
+* estrutura Avro;
+* tópicos Kafka.
+
+Essas decisões pertencem aos modelos lógico e físico, ao processamento analítico ou às respectivas regras de engenharia e negócio.
+
+---
+
+### 18. Related Engineering and Architecture
+
+| Documento |                           	Relação                                            |
+|---------|------------------------------------------------------------------------------------|
+| IPEM-09 |	Estabelece análise e gestão orientadas por contexto operacional                    |
+| ARCH-02 |	Define Progressive Information Enrichment                                          |
+| ARCH-06 |	Define Analytics and Knowledge como camada de geração de conhecimento para decisão | 
+| ADR-05  |	Estabelece processamento e derivação de novas informações                          |
+| DM-01   |	Define KPI como entidade derivada do modelo conceitual                             |
+| DM-02   |	Estabelece as identidades industriais utilizadas para definir escopo               |
+| DM-03	  | Estabelece temporalidade e qualidade das evidências industriais                    |
+| DM-04	  | Estabelece Operational Context como dimensão explícita de interpretação            |
+
+---
+
+### 20. Considerações Finais
+
+O DM-05 estabelece KPI como uma síntese analítica semanticamente definida e derivada de evidências industriais.
+````
+Industrial Evidence
+        │
+        ▼
+    Derivation
+        │
+        ▼
+    KPI Result
+   ┌────┼────┐
+   │    │    │
+   ▼    ▼    ▼
+ Value Time Scope
+        │
+        ▼
+     Context
+        │
+        ▼
+Analytical Understanding
+````
+Um KPI não é definido apenas por sua fórmula ou valor.
+
+Seu significado depende da combinação entre definição, semântica de cálculo, escopo industrial, referência temporal, granularidade e contexto operacional.
+
+A rastreabilidade permite explicar como o resultado foi produzido, enquanto a compatibilidade semântica determina quando diferentes resultados podem ser comparados.
+
+Dessa forma, o IMS não trata Analytics apenas como produção de números, mas como transformação de evidências industriais em informação interpretável para suporte à decisão.
