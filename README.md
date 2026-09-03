@@ -117,7 +117,14 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |   │    └── ADR-08 - Data-Platform-Observability.md
 │   │
 |   ├── data-model/
-│   │
+│   │    ├── DM-01 - Conceptual-Industrial.md
+|   │    ├── DM-02 - Industrial-Identity-Model.md
+|   │    ├── DM-03 - Industrial-Temporal-Model.md
+|   │    ├── DM-04 - Operational-Context-Model.md
+|   │    ├── DM-05 - KPI-Model.md
+|   │    ├── DM-06 - Logical-Data-Model.md
+|   │    └── DM-07 - Physical-Data-Model.md
+|   |
 |   ├── api/
 |   |
 │   └── guides/
