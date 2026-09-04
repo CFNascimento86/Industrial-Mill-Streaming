@@ -128,7 +128,9 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |   ├── api/
 |   |
 │   └── guides/
-│   
+│
+├── implementation-design/
+|  
 ├── src/
 │
 ├── docker/
