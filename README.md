@@ -124,9 +124,8 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |         ├── DM-06 - Logical-Data-Model.md
 |         └── DM-07 - Physical-Data-Model.md
 |   
-├── specifications/
-|         └── information-catalog/
-|                  ├── README.md
-|                  └── milling-information-catalog.yaml
+├── information-catalog/
+|         ├── README.md
+|         └── milling-information-catalog.yaml
 |
 ````
