@@ -83,59 +83,50 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 ├── README.md     
 │
 ├── docs/
-│   │
-│   ├── specifications/
-│   │      └── IPEM/
-│   │          ├── IPEM-01 - Introduction.md
-|   │          ├── IPEM-02 - Business-Context.md
-|   │          ├── IPEM-03 - Reference-Domain.md
-|   │          ├── IPEM-04 - Process-Model.md
-|   │          ├── IPEM-05 - Asset-Model.md
-|   │          ├── IPEM-06 - Instrumentation-Model.md
-|   │          ├── IPEM-07 - Telemetry-Model.md
-|   │          ├── IPEM-08 - Event-Model.md
-|   │          └── IPEM-09 - KPI-Model.md    
-|   |
-│   ├── architecture/
-|   |       ├── ARCH-00 — Architecture Philosophy.md
-│   │       ├── ARCH-01 — Overall Architecture.md
-|   │       ├── ARCH-02 — Data Architecture.md
-|   │       ├── ARCH-03 — Integration Architecture.md
-|   │       ├── ARCH-04 — Infrastructure Architecture.md
-|   │       ├── ARCH-05 — Security Architecture.md
-|   │       └── ARCH-06 — Analytics Architecture.md
-|   │
-│   ├── adr/
-|   |    ├── ADR-00 - Architecture-Decision.md
-|   |    ├── ADR-01 - Event-Driven-Integration.md 
-|   │    ├── ADR-02 - Industrial-Data-Aquisition.md
-|   │    ├── ADR-03 - Industrial-Data-Persistence.md
-|   │    ├── ADR-04 - Industrial-Information-Contracts.md
-|   │    ├── ADR-05 - Event-Processing.md
-|   │    ├── ADR-06 - Kafka-Event-Topology.md
-|   │    ├── ADR-07 - Containerized.md
-|   │    └── ADR-08 - Data-Platform-Observability.md
-│   │
-|   ├── data-model/
-│   │    ├── DM-01 - Conceptual-Industrial.md
-|   │    ├── DM-02 - Industrial-Identity-Model.md
-|   │    ├── DM-03 - Industrial-Temporal-Model.md
-|   │    ├── DM-04 - Operational-Context-Model.md
-|   │    ├── DM-05 - KPI-Model.md
-|   │    ├── DM-06 - Logical-Data-Model.md
-|   │    └── DM-07 - Physical-Data-Model.md
-|   |
-|   ├── api/
-|   |
-│   └── guides/
-│
-├── implementation-design/
-|  
-├── src/
-│
-├── docker/
-│
-├── simulator/
-│
-└── ...
+│    │
+│    ├── IPEM/
+│    │     ├── IPEM-01 - Introduction.md
+|    │     ├── IPEM-02 - Business-Context.md
+|    │     ├── IPEM-03 - Reference-Domain.md
+|    │     ├── IPEM-04 - Process-Model.md
+|    │     ├── IPEM-05 - Asset-Model.md
+|    │     ├── IPEM-06 - Instrumentation-Model.md
+|    │     ├── IPEM-07 - Telemetry-Model.md
+|    │     ├── IPEM-08 - Event-Model.md
+|    │     └── IPEM-09 - KPI-Model.md    
+|    |
+│    ├── architecture/
+|    |     ├── ARCH-00 — Architecture Philosophy.md
+│    │     ├── ARCH-01 — Overall Architecture.md
+|    │     ├── ARCH-02 — Data Architecture.md
+|    │     ├── ARCH-03 — Integration Architecture.md
+|    │     ├── ARCH-04 — Infrastructure Architecture.md
+|    │     ├── ARCH-05 — Security Architecture.md
+|    │     └── ARCH-06 — Analytics Architecture.md
+|    │
+│    ├── adr/
+|    |    ├── ADR-00 - Architecture-Decision.md
+|    |    ├── ADR-01 - Event-Driven-Integration.md 
+|    │    ├── ADR-02 - Industrial-Data-Aquisition.md
+|    │    ├── ADR-03 - Industrial-Data-Persistence.md
+|    │    ├── ADR-04 - Industrial-Information-Contracts.md
+|    │    ├── ADR-05 - Event-Processing.md
+|    │    ├── ADR-06 - Kafka-Event-Topology.md
+|    │    ├── ADR-07 - Containerized.md
+|    │    └── ADR-08 - Data-Platform-Observability.md
+│    |
+|    └── data-model/
+│         ├── DM-01 - Conceptual-Industrial.md
+|         ├── DM-02 - Industrial-Identity-Model.md
+|         ├── DM-03 - Industrial-Temporal-Model.md
+|         ├── DM-04 - Operational-Context-Model.md
+|         ├── DM-05 - KPI-Model.md
+|         ├── DM-06 - Logical-Data-Model.md
+|         └── DM-07 - Physical-Data-Model.md
+|   
+├── specifications/
+|         └── information-catalog/
+|                  ├── README.md
+|                  └── milling-information-catalog.yaml
+|
 ````
