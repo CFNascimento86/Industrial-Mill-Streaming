@@ -1,0 +1,983 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Milling Information Catalog
+# =============================================================================
+#
+# Especificação semântica das informações industriais reconhecidas pelo IMS.
+#
+# Este arquivo descreve o significado das informações industriais.
+# Localizações técnicas, endereços de PLC, protocolos, tópicos Kafka,
+# estruturas de banco e parâmetros de aquisição não pertencem a este catálogo.
+#
+# Principles:
+#   - Identity Before Storage
+#   - Identity Is Not Location
+#   - Meaning Defines Continuity
+#   - Observation Is Not Meaning
+#   - Context Is a First-Class Entity
+#   - KPI Is Derived Information
+#
+# =============================================================================
+
+catalog:
+  name: milling_information_catalog
+  domain: milling
+  version: "1.0"
+  status: baseline
+
+  description: >
+    Catálogo semântico das informações industriais reconhecidas pelo
+    Industrial Mill Streaming no domínio da Moenda.
+
+# =============================================================================
+# PROCESS
+# =============================================================================
+
+process:
+
+  logical_name: milling
+  display_name: Moenda
+
+  description: >
+    Processo industrial responsável pela preparação, alimentação e extração
+    mecânica do caldo da cana-de-açúcar, incluindo acionamentos, equipamentos
+    auxiliares, embebição e geração de bagaço.
+
+# =============================================================================
+# INFORMATION GROUPS
+# =============================================================================
+
+information_groups:
+
+  - logical_name: mechanical_load_and_drives
+    display_name: Carga Mecânica e Acionamentos
+
+    description: >
+      Informações relacionadas ao carregamento mecânico dos equipamentos
+      e ao comportamento dos acionamentos da Moenda.
+
+  - logical_name: extraction_process
+    display_name: Processo de Extração
+
+    description: >
+      Informações relacionadas à alimentação de cana, extração de caldo,
+      embebição e condição do bagaço.
+
+  - logical_name: equipment_condition_and_safety
+    display_name: Condição dos Equipamentos e Segurança
+
+    description: >
+      Informações relacionadas à condição mecânica dos equipamentos,
+      sistemas auxiliares, proteção, intertravamentos e segurança operacional.
+
+  - logical_name: operational_state
+    display_name: Estado Operacional
+
+    description: >
+      Informações que representam os estados, modos e ocorrências associados
+      à operação dos equipamentos da Moenda.
+
+  - logical_name: derived_information
+    display_name: Informações Derivadas
+
+    description: >
+      Informações calculadas ou contextualizadas a partir de evidências
+      industriais primárias.
+
+# =============================================================================
+# MECHANICAL LOAD & DRIVES
+# =============================================================================
+
+information_items:
+
+  # ---------------------------------------------------------------------------
+  # Roll Speeds
+  # ---------------------------------------------------------------------------
+
+  - logical_name: upper_roll_speed
+    display_name: Velocidade do Rolo Superior
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: mill_train
+
+    engineering_unit: rpm
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Velocidade de rotação do rolo superior da moenda.
+
+  - logical_name: front_roll_speed
+    display_name: Velocidade do Rolo Frontal
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: mill_train
+
+    engineering_unit: rpm
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Velocidade de rotação do rolo frontal da moenda.
+
+  - logical_name: rear_roll_speed
+    display_name: Velocidade do Rolo Traseiro
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: mill_train
+
+    engineering_unit: rpm
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Velocidade de rotação do rolo traseiro da moenda.
+
+  # ---------------------------------------------------------------------------
+  # Preparation and Feeding Equipment
+  # ---------------------------------------------------------------------------
+
+  - logical_name: chopper_speed
+    display_name: Velocidade do Picador
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: chopper
+
+    engineering_unit: rpm
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Velocidade de rotação do picador utilizado na preparação da cana.
+
+  - logical_name: shredder_speed
+    display_name: Velocidade do Desfibrador
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: shredder
+
+    engineering_unit: rpm
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Velocidade de rotação do desfibrador utilizado na preparação da cana.
+
+  - logical_name: feed_conveyor_speed
+    display_name: Velocidade da Esteira de Alimentação
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: feed_conveyor
+
+    engineering_unit: null
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Velocidade operacional da esteira responsável pela alimentação
+      de cana ao processo.
+
+  # ---------------------------------------------------------------------------
+  # Main Drives
+  # ---------------------------------------------------------------------------
+
+  - logical_name: main_drive_01_torque
+    display_name: Torque do Acionamento Principal 01
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: main_drive_01
+
+    engineering_unit: null
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Torque disponibilizado pelo primeiro acionamento principal da moenda.
+
+  - logical_name: main_drive_02_torque
+    display_name: Torque do Acionamento Principal 02
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: main_drive_02
+
+    engineering_unit: null
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Torque disponibilizado pelo segundo acionamento principal da moenda.
+
+  - logical_name: main_drive_03_torque
+    display_name: Torque do Acionamento Principal 03
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: main_drive_03
+
+    engineering_unit: null
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Torque disponibilizado pelo terceiro acionamento principal da moenda.
+
+  # ---------------------------------------------------------------------------
+  # Electrical Load
+  # ---------------------------------------------------------------------------
+
+  - logical_name: feed_conveyor_motor_current
+    display_name: Corrente do Motor da Esteira de Alimentação
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: feed_conveyor
+
+    engineering_unit: A
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Corrente elétrica do motor responsável pelo acionamento
+      da esteira de alimentação.
+
+  - logical_name: chopper_motor_current
+    display_name: Corrente do Motor do Picador
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: chopper
+
+    engineering_unit: A
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Corrente elétrica do motor responsável pelo acionamento do picador.
+
+  - logical_name: shredder_motor_current
+    display_name: Corrente do Motor do Desfibrador
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: shredder
+
+    engineering_unit: A
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Corrente elétrica do motor responsável pelo acionamento do desfibrador.
+
+  - logical_name: active_power
+    display_name: Potência Ativa dos Acionamentos
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: milling_drive_system
+
+    engineering_unit: kW
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Potência ativa associada aos acionamentos monitorados no processo
+      de moagem.
+
+  - logical_name: apparent_power
+    display_name: Potência Aparente dos Acionamentos
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: milling_drive_system
+
+    engineering_unit: kVA
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Potência aparente associada aos acionamentos monitorados no processo
+      de moagem.
+
+  # ---------------------------------------------------------------------------
+  # Hydraulic Loading
+  # ---------------------------------------------------------------------------
+
+  - logical_name: hydraulic_pressure
+    display_name: Pressão Hidráulica da Moenda
+    information_group: mechanical_load_and_drives
+    information_class: telemetry
+
+    process: milling
+    asset: mill_train
+
+    engineering_unit: bar
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Pressão do sistema hidráulico associada à compressão dos rolos
+      e ao carregamento mecânico da moenda.
+
+# =============================================================================
+# EXTRACTION PROCESS
+# =============================================================================
+
+  - logical_name: cane_flow
+    display_name: Vazão de Cana
+    information_group: extraction_process
+    information_class: telemetry
+
+    process: milling
+    asset: feed_system
+
+    engineering_unit: t/h
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Taxa de alimentação de cana direcionada ao processo de moagem.
+
+  - logical_name: feed_level
+    display_name: Nível de Alimentação
+    information_group: extraction_process
+    information_class: telemetry
+
+    process: milling
+    asset: feed_system
+
+    engineering_unit: "%"
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Nível ou condição de carregamento do sistema responsável
+      pela alimentação de cana à moenda.
+
+  - logical_name: juice_flow
+    display_name: Vazão de Caldo Extraído
+    information_group: extraction_process
+    information_class: telemetry
+
+    process: milling
+    asset: juice_extraction_system
+
+    engineering_unit: m3/h
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Vazão de caldo obtida durante o processo de extração.
+
+  - logical_name: juice_temperature
+    display_name: Temperatura do Caldo
+    information_group: extraction_process
+    information_class: telemetry
+
+    process: milling
+    asset: juice_extraction_system
+
+    engineering_unit: degC
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Temperatura do caldo durante o processo de extração.
+
+  - logical_name: imbibition_water_flow
+    display_name: Vazão de Água de Embebição
+    information_group: extraction_process
+    information_class: telemetry
+
+    process: milling
+    asset: imbibition_system
+
+    engineering_unit: m3/h
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Vazão de água utilizada no processo de embebição durante a moagem.
+
+  - logical_name: bagasse_moisture
+    display_name: Umidade do Bagaço
+    information_group: extraction_process
+    information_class: telemetry
+
+    process: milling
+    asset: bagasse_output
+
+    engineering_unit: "%"
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Teor de umidade do bagaço resultante do processo de moagem.
+
+# =============================================================================
+# EQUIPMENT CONDITION & SAFETY
+# =============================================================================
+
+  - logical_name: bearing_temperature
+    display_name: Temperatura de Mancal
+    information_group: equipment_condition_and_safety
+    information_class: telemetry
+
+    process: milling
+    asset: mill_train
+
+    engineering_unit: degC
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Temperatura associada aos mancais ou rolamentos dos equipamentos
+      monitorados da moenda.
+
+  - logical_name: lubrication_oil_pressure
+    display_name: Pressão do Óleo de Lubrificação
+    information_group: equipment_condition_and_safety
+    information_class: telemetry
+
+    process: milling
+    asset: lubrication_system
+
+    engineering_unit: bar
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Pressão do sistema de óleo utilizado na lubrificação dos equipamentos.
+
+  - logical_name: lubrication_oil_temperature
+    display_name: Temperatura do Óleo de Lubrificação
+    information_group: equipment_condition_and_safety
+    information_class: telemetry
+
+    process: milling
+    asset: lubrication_system
+
+    engineering_unit: degC
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Temperatura do óleo utilizado pelo sistema de lubrificação.
+
+  - logical_name: turbine_oil_pressure
+    display_name: Pressão do Óleo da Turbina
+    information_group: equipment_condition_and_safety
+    information_class: telemetry
+
+    process: milling
+    asset: turbine_system
+
+    engineering_unit: bar
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Pressão do óleo associado ao sistema das turbinas responsáveis
+      pelos acionamentos principais.
+
+  - logical_name: turbine_oil_temperature
+    display_name: Temperatura do Óleo da Turbina
+    information_group: equipment_condition_and_safety
+    information_class: telemetry
+
+    process: milling
+    asset: turbine_system
+
+    engineering_unit: degC
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Temperatura do óleo associado ao sistema das turbinas dos
+      acionamentos principais.
+
+  - logical_name: vibration_rms
+    display_name: Vibração RMS
+    information_group: equipment_condition_and_safety
+    information_class: telemetry
+
+    process: milling
+    asset: rotating_equipment
+
+    engineering_unit: mm/s
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Indicador RMS de vibração disponibilizado para avaliação da condição
+      de equipamentos rotativos.
+
+  - logical_name: interlock_active
+    display_name: Intertravamento Ativo
+    information_group: equipment_condition_and_safety
+    information_class: state
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: null
+    temporal_behavior: discrete
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Estado que indica a presença de um intertravamento proveniente
+      da lógica de controle e proteção existente.
+
+  - logical_name: trip_active
+    display_name: Trip Ativo
+    information_group: equipment_condition_and_safety
+    information_class: state
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: null
+    temporal_behavior: discrete
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    description: >
+      Estado que indica condição de trip ativa proveniente da engenharia
+      de controle e proteção existente.
+
+  - logical_name: trip_occurred
+    display_name: Ocorrência de Trip
+    information_group: equipment_condition_and_safety
+    information_class: event
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: null
+    temporal_behavior: point_event
+    source_type: observed
+    quality_required: false
+
+    implementation_priority: core
+
+    description: >
+      Ocorrência temporal de um trip identificado no processo ou
+      nos equipamentos da moenda.
+
+  - logical_name: safety_switch_state
+    display_name: Estado de Dispositivo de Segurança
+    information_group: equipment_condition_and_safety
+    information_class: state
+
+    process: milling
+    asset: safety_system
+
+    engineering_unit: null
+    temporal_behavior: discrete
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Estado de dispositivo de segurança, proteção ou acesso monitorado
+      pela automação existente.
+
+  - logical_name: raw_vibration_waveform
+    display_name: Forma de Onda Bruta de Vibração
+    information_group: equipment_condition_and_safety
+    information_class: telemetry
+
+    process: milling
+    asset: rotating_equipment
+
+    engineering_unit: null
+    temporal_behavior: continuous
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: future
+
+    description: >
+      Forma de onda de vibração em alta frequência destinada a análises
+      especializadas de condição. Reconhecida pelo catálogo, mas mantida
+      fora do escopo inicial do IMS.
+
+# =============================================================================
+# OPERATIONAL STATE
+# =============================================================================
+
+  - logical_name: control_mode
+    display_name: Modo de Controle
+    information_group: operational_state
+    information_class: operational_context
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: null
+    temporal_behavior: discrete
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    allowed_values:
+      - manual
+      - automatic
+
+    description: >
+      Modo de controle sob o qual o equipamento ou sistema está operando.
+
+  - logical_name: control_location
+    display_name: Local de Controle
+    information_group: operational_state
+    information_class: operational_context
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: null
+    temporal_behavior: discrete
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    allowed_values:
+      - local
+      - remote
+
+    description: >
+      Origem ou local a partir do qual o controle operacional está sendo
+      exercido.
+
+  - logical_name: equipment_state
+    display_name: Estado do Equipamento
+    information_group: operational_state
+    information_class: state
+
+    process: milling
+    asset: equipment
+
+    engineering_unit: null
+    temporal_behavior: discrete
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: core
+
+    allowed_values:
+      - stopped
+      - starting
+      - running
+      - stopping
+      - faulted
+      - safety_stopped
+
+    description: >
+      Estado operacional normalizado de um equipamento industrial.
+
+  - logical_name: start_count
+    display_name: Contador de Partidas
+    information_group: operational_state
+    information_class: telemetry
+
+    process: milling
+    asset: equipment
+
+    engineering_unit: count
+    temporal_behavior: counter
+    source_type: observed
+    quality_required: true
+
+    implementation_priority: enrichment
+
+    description: >
+      Contador acumulativo de partidas disponibilizado pelo equipamento
+      ou sistema de controle.
+
+  - logical_name: alarm_occurred
+    display_name: Ocorrência de Alarme
+    information_group: operational_state
+    information_class: event
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: null
+    temporal_behavior: point_event
+    source_type: observed
+    quality_required: false
+
+    implementation_priority: core
+
+    description: >
+      Ocorrência de alarme proveniente do sistema de automação ou de
+      gerenciamento de alarmes existente.
+
+  - logical_name: operational_event
+    display_name: Evento Operacional
+    information_group: operational_state
+    information_class: event
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: null
+    temporal_behavior: point_event
+    source_type: observed
+    quality_required: false
+
+    implementation_priority: enrichment
+
+    description: >
+      Ocorrência significativa relacionada à operação do processo
+      ou de seus equipamentos.
+
+# =============================================================================
+# DERIVED INFORMATION
+# =============================================================================
+
+  - logical_name: cane_throughput
+    display_name: Taxa de Processamento de Cana
+    information_group: derived_information
+    information_class: derived_measure
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: t/h
+    temporal_behavior: derived
+    source_type: derived
+    quality_required: true
+
+    implementation_priority: derived
+
+    description: >
+      Taxa de processamento de cana calculada a partir das evidências
+      industriais disponíveis quando não obtida diretamente como medição.
+
+  - logical_name: imbibition_ratio
+    display_name: Relação de Embebição
+    information_group: derived_information
+    information_class: derived_measure
+
+    process: milling
+    asset: imbibition_system
+
+    engineering_unit: null
+    temporal_behavior: derived
+    source_type: derived
+    quality_required: true
+
+    implementation_priority: derived
+
+    description: >
+      Relação entre a quantidade de água utilizada na embebição
+      e a quantidade de cana processada no período correspondente.
+
+  - logical_name: runtime
+    display_name: Tempo de Operação
+    information_group: derived_information
+    information_class: derived_measure
+
+    process: milling
+    asset: equipment
+
+    engineering_unit: h
+    temporal_behavior: derived
+    source_type: derived
+    quality_required: true
+
+    implementation_priority: derived
+
+    description: >
+      Tempo efetivo de operação derivado dos estados e transições
+      operacionais do equipamento.
+
+  - logical_name: extraction_performance
+    display_name: Desempenho de Extração
+    information_group: derived_information
+    information_class: kpi
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: "%"
+    temporal_behavior: derived
+    source_type: derived
+    quality_required: true
+
+    implementation_priority: derived
+
+    description: >
+      Indicador de desempenho associado à eficiência do processo
+      de extração. Sua definição matemática deverá ser formalizada
+      antes da implementação do cálculo.
+
+  - logical_name: specific_energy_consumption
+    display_name: Consumo Específico de Energia
+    information_group: derived_information
+    information_class: kpi
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: kWh/t
+    temporal_behavior: derived
+    source_type: derived
+    quality_required: true
+
+    implementation_priority: derived
+
+    description: >
+      Indicador que relaciona o consumo de energia ao volume de cana
+      processado durante um período de referência.
+
+  - logical_name: choking_rate
+    display_name: Índice de Embuchamento
+    information_group: derived_information
+    information_class: kpi
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: events/h
+    temporal_behavior: derived
+    source_type: derived
+    quality_required: true
+
+    implementation_priority: derived
+
+    description: >
+      Indicador que relaciona ocorrências de embuchamento ao período
+      operacional considerado. Sua definição matemática deverá estabelecer
+      explicitamente o período e os eventos considerados.
+
+  - logical_name: operational_availability
+    display_name: Disponibilidade Operacional
+    information_group: derived_information
+    information_class: kpi
+
+    process: milling
+    asset: milling_system
+
+    engineering_unit: "%"
+    temporal_behavior: derived
+    source_type: derived
+    quality_required: true
+
+    implementation_priority: derived
+
+    description: >
+      Indicador de disponibilidade calculado a partir dos estados
+      operacionais e do período de referência. Sua definição deverá
+      estabelecer explicitamente os estados, exclusões e tempos considerados.
