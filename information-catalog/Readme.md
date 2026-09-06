@@ -1,6 +1,6 @@
 ### 1. Contexto
 
-O *Information Catalog* define as informações industriais reconhecidas pelo Industrial Mill Streaming (IMS) no domínio da Moenda.
+O *Information Catalog* define as informações industriais reconhecidas pelo Industrial Mill Streaming (IMS).
 
 Sua finalidade é estabelecer uma especificação semântica, canônica e versionada das informações utilizadas pelo sistema, preservando seu significado industrial independentemente da representação técnica adotada.
 
@@ -60,7 +60,7 @@ As informações industriais são organizadas em cinco grupos:
 Esses grupos representam perspectivas complementares do processo industrial:
 
 ```text
-Milling
+Moenda
 │
 ├── Mechanical Behavior
 ├── Process Condition
@@ -199,12 +199,12 @@ A definição canônica do catálogo será armazenada em:
 ```text
 information-catalog/
     ├── README.md
-    └── milling-information-catalog.yaml
+    └── moenda-information-catalog.yaml
 ```
 
 O arquivo `README.md` estabelece a finalidade, estrutura e regras de governança do catálogo.
 
-O arquivo `milling-information-catalog.yaml` contém a especificação semântica das informações industriais reconhecidas pelo IMS.
+O arquivo `moenda-information-catalog.yaml` contém a especificação semântica das informações industriais reconhecidas pelo IMS.
 
 Cada item deverá possuir uma definição mínima.
 
@@ -283,7 +283,7 @@ logical_name
 Semantic Identity
      │
      ▼
-variable_id
+ variable_id
      │
      ▼
 Persistent Identity
@@ -295,7 +295,7 @@ Exemplo:
 hydraulic_pressure
         │
         ▼
-variable_id
+   variable_id
         │
         ▼
        UUID
@@ -361,7 +361,7 @@ Siemens S7-1500
     DB / Offset
 ```
 
-Uma alteração na localização técnica não deverá alterar a identidade industrial quando o significado permanecer inalterado.
+Uma alteração na localização técnica não deverá alterar a identidade industrial.
 
 ---
 
@@ -563,7 +563,7 @@ Informação calculada a partir de outras informações industriais.
 Industrial Evidence
       │
       ▼
-Calculation
+  Calculation
       │
       ▼
 Derived Information
@@ -591,8 +591,7 @@ Industrial Evidence
 Operational Context
 ```
 
-Exemplos futuros podem incluir condições operacionais inferidas a partir do comportamento conjunto de múltiplas variáveis.
-
+Exemplos futuros podem incluir condições operacionais inferidas a partir do comportamento conjunto de múltiplas variáveis. 
 A origem da informação deverá permanecer rastreável sempre que sua semântica exigir.
 
 ---
@@ -981,7 +980,7 @@ Essa separação preserva a rastreabilidade entre conhecimento industrial, arqui
 
 ### 22. Considerações Finais
 
-O Information Catalog estabelece uma referência semântica comum entre o domínio industrial e a implementação do IMS.
+O Information Catalog estabelece uma referência semântica comum entre o domínio industrial e a implementação.
 
 Ele não representa:
 
