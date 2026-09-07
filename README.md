@@ -128,4 +128,9 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |         ├── README.md
 |         └── milling-information-catalog.yaml
 |
+├── database/
+|         ├── processes.yaml
+|         ├── assets.yaml
+|         └── variables.yaml
+|
 ````
