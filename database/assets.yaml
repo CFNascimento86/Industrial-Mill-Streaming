@@ -1,0 +1,310 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Industrial Asset Seeds
+# =============================================================================
+#
+# Materialização inicial das identidades de ativos reconhecidas pelo IMS
+# no domínio da Moenda.
+#
+# Os ativos são organizados segundo sua função industrial e suas relações
+# hierárquicas, preservando os princípios:
+#
+#   - Function Before Asset
+#   - Identity Is Not Location
+#   - Meaning Defines Continuity
+#
+# O Asset Tree representa pertencimento e decomposição estrutural.
+# Relações funcionais entre ativos não devem ser artificialmente convertidas
+# em relações hierárquicas.
+#
+# Este arquivo não representa:
+#
+#   - estrutura física da automação;
+#   - endereços de PLC;
+#   - instrumentação;
+#   - protocolos de aquisição;
+#   - relações elétricas ou mecânicas completas;
+#   - configurações técnicas de integração.
+#
+# =============================================================================
+
+assets:
+
+  # ===========================================================================
+  # FEED PREPARATION
+  # ===========================================================================
+
+  - logical_name: feed_preparation
+    display_name: Preparação e Alimentação de Cana
+
+    process: milling
+    parent_asset: null
+
+    asset_type: functional_system
+
+    description: >
+      Unidade funcional responsável pela preparação e alimentação
+      de cana ao processo de moagem.
+
+    status: active
+
+  - logical_name: feed_conveyor
+    display_name: Esteira de Alimentação
+
+    process: milling
+    parent_asset: feed_preparation
+
+    asset_type: equipment
+
+    description: >
+      Equipamento responsável pelo transporte e alimentação de cana
+      para as etapas subsequentes do processo.
+
+    status: active
+
+  - logical_name: chopper
+    display_name: Picador
+
+    process: milling
+    parent_asset: feed_preparation
+
+    asset_type: equipment
+
+    description: >
+      Equipamento utilizado na preparação da cana antes da moagem,
+      promovendo sua fragmentação inicial.
+
+    status: active
+
+  - logical_name: shredder
+    display_name: Desfibrador
+
+    process: milling
+    parent_asset: feed_preparation
+
+    asset_type: equipment
+
+    description: >
+      Equipamento responsável pela desfibração da cana antes
+      do processo de extração.
+
+    status: active
+
+
+  # ===========================================================================
+  # MILLING TRAIN
+  # ===========================================================================
+
+  - logical_name: milling_train
+    display_name: Conjunto de Moagem
+
+    process: milling
+    parent_asset: null
+
+    asset_type: functional_system
+
+    description: >
+      Unidade funcional que representa o conjunto de equipamentos
+      responsáveis pela extração mecânica do caldo durante a moagem.
+
+    status: active
+
+
+  # ---------------------------------------------------------------------------
+  # Main Drive 01
+  # ---------------------------------------------------------------------------
+
+  - logical_name: main_drive_01
+    display_name: Acionamento Principal 01
+
+    process: milling
+    parent_asset: milling_train
+
+    asset_type: equipment
+
+    description: >
+      Acionamento principal pertencente ao conjunto de moagem e responsável
+      pela transmissão de potência aos Ternos 01 e 02 através do sistema
+      mecânico de volandeiras associado.
+
+    status: active
+
+ 
+  # ---------------------------------------------------------------------------
+  # Mill 01
+  # ---------------------------------------------------------------------------
+
+  - logical_name: mill_01
+    display_name: Terno 01
+
+    process: milling
+    parent_asset: milling_train
+
+    asset_type: equipment
+
+    description: >
+      Primeiro terno de moagem detalhado no escopo inicial do IMS,
+      responsável por uma etapa da extração mecânica do caldo da cana.
+
+    status: active
+
+  - logical_name: upper_roll_01
+    display_name: Rolo Superior — Terno 01
+
+    process: milling
+    parent_asset: mill_01
+
+    asset_type: component
+
+    description: >
+      Rolo superior do primeiro terno de moagem, submetido à atuação
+      controlada do sistema hidráulico de carga, permitindo aplicação
+      de força e flutuação durante a compressão do colchão de cana.
+
+    status: active
+
+  - logical_name: hydraulic_system_upper_roll_01
+    display_name: Sistema Hidráulico do Rolo Superior — Terno 01
+
+    process: milling
+    parent_asset: upper_roll_01
+
+    asset_type: subsystem
+
+    description: >
+      Sistema hidráulico responsável pela aplicação e controle da força
+      exercida pelo rolo superior do primeiro terno de moagem.
+
+    status: active
+
+    - logical_name: lubrication_system_01
+    display_name: Sistema de Lubrificação — Terno 01
+
+    process: milling
+    parent_asset: mill_01
+
+    asset_type: subsystem
+
+    description: >
+      Sistema responsável pelo fornecimento e manutenção das condições
+      de lubrificação dos componentes associados ao primeiro terno
+      de moagem.
+
+    status: active
+
+
+  # ---------------------------------------------------------------------------
+  # Mill 02
+  # ---------------------------------------------------------------------------
+
+  - logical_name: mill_02
+    display_name: Terno 02
+
+    process: milling
+    parent_asset: milling_train
+
+    asset_type: equipment
+
+    description: >
+      Segundo terno funcionalmente associado ao Acionamento Principal 01.
+      Mantido no escopo inicial como identidade industrial necessária
+      para preservar a representação correta do conjunto de moagem,
+      sem detalhamento interno nesta etapa.
+
+    status: active
+
+
+  # ===========================================================================
+  # IMBIBITION SYSTEM
+  # ===========================================================================
+
+  - logical_name: imbibition_system
+    display_name: Sistema de Embebição
+
+    process: milling
+    parent_asset: null
+
+    asset_type: functional_system
+
+    description: >
+      Unidade funcional responsável pelo fornecimento e distribuição
+      de água de embebição durante o processo de moagem.
+
+    status: active
+
+
+  # ===========================================================================
+  # JUICE EXTRACTION
+  # ===========================================================================
+
+  - logical_name: juice_extraction_system
+    display_name: Sistema de Extração de Caldo
+
+    process: milling
+    parent_asset: null
+
+    asset_type: functional_system
+
+    description: >
+      Unidade funcional associada à coleta e representação das informações
+      referentes ao caldo obtido durante o processo de extração.
+
+    status: active
+
+
+  # ===========================================================================
+  # BAGASSE OUTPUT
+  # ===========================================================================
+
+  - logical_name: bagasse_output
+    display_name: Saída de Bagaço
+
+    process: milling
+    parent_asset: null
+
+    asset_type: functional_system
+
+    description: >
+      Unidade funcional associada à saída e caracterização do bagaço
+      resultante do processo de moagem.
+
+    status: active
+
+
+  # ===========================================================================
+  # TURBINE SYSTEM
+  # ===========================================================================
+
+  - logical_name: turbine_system
+    display_name: Sistema de Turbinas
+
+    process: milling
+    parent_asset: milling_train
+
+    asset_type: functional_system
+
+    description: >
+      Unidade funcional associada às turbinas utilizadas para disponibilizar
+      potência mecânica aos acionamentos principais do conjunto de moagem.
+
+    status: active
+
+
+  # ===========================================================================
+  # SAFETY SYSTEM
+  # ===========================================================================
+
+  - logical_name: safety_system
+    display_name: Sistema de Segurança
+
+    process: milling
+    parent_asset: null
+
+    asset_type: functional_system
+
+    description: >
+      Unidade funcional utilizada para organizar identidades associadas
+      aos dispositivos, estados e condições de segurança observados
+      pelo IMS a partir da engenharia de automação existente.
+
+    status: active
