@@ -1,0 +1,24 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Industrial Process Seeds
+# =============================================================================
+#
+# Materialização inicial das identidades de processo reconhecidas pelo IMS.
+#
+# Este arquivo não representa a estrutura física da automação nem configurações
+# de aquisição. Ele define apenas identidades industriais estáveis utilizadas
+# pelo modelo persistente.
+#
+# =============================================================================
+
+processes:
+
+  - logical_name: milling
+    display_name: Moenda
+
+    description: >
+      Processo industrial responsável pela preparação, alimentação e extração
+      mecânica do caldo da cana-de-açúcar, incluindo moagem, embebição e geração
+      de bagaço.
+
+    status: active
