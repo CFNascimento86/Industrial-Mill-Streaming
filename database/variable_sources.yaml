@@ -1,0 +1,128 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Variable Source Seeds
+# =============================================================================
+#
+# Materialização inicial das associações entre variáveis industriais
+# reconhecidas pelo IMS e suas respectivas fontes técnicas.
+#
+# Este arquivo responde:
+#
+#   "Qual fonte técnica fornece esta variável industrial?"
+#
+# Ele não define como a variável é tecnicamente obtida da fonte.
+#
+# Portanto, este arquivo não contém:
+#
+#   - endereços de PLC;
+#   - DBs ou offsets;
+#   - tipos de dados S7;
+#   - OPC UA NodeIds;
+#   - parâmetros de conexão;
+#   - polling intervals;
+#   - Kafka topics;
+#   - contratos Avro.
+#
+# Essas informações pertencem ao Acquisition Mapping e às respectivas
+# responsabilidades de implementação.
+#
+# Princípios preservados:
+#
+#   - Identity Before Storage
+#   - Identity Is Not Location
+#   - Data Before Transport
+#
+# =============================================================================
+
+variable_sources:
+
+  # ===========================================================================
+  # FEED PREPARATION
+  # ===========================================================================
+
+  - variable: feed_conveyor_speed
+    source: s7_1500_milling
+
+  - variable: feed_conveyor_motor_current
+    source: s7_1500_milling
+
+  - variable: chopper_speed
+    source: s7_1500_milling
+
+  - variable: chopper_motor_current
+    source: s7_1500_milling
+
+  - variable: shredder_speed
+    source: s7_1500_milling
+
+  - variable: shredder_motor_current
+    source: s7_1500_milling
+
+  - variable: shredder_vibration_rms
+    source: s7_1500_milling
+
+  - variable: cane_flow
+    source: s7_1500_milling
+
+
+  # ===========================================================================
+  # MILLING TRAIN — MILL 01
+  # ===========================================================================
+
+  - variable: mill_01_upper_roll_speed
+    source: s7_1500_milling
+
+  - variable: mill_01_hydraulic_pressure
+    source: s7_1500_milling
+
+  - variable: mill_01_lubrication_oil_pressure
+    source: s7_1500_milling
+
+  - variable: mill_01_lubrication_oil_temperature
+    source: s7_1500_milling
+
+
+  # ===========================================================================
+  # MAIN DRIVE
+  # ===========================================================================
+
+  - variable: main_drive_01_torque
+    source: s7_1500_milling
+
+
+  # ===========================================================================
+  # TURBINE SYSTEM
+  # ===========================================================================
+
+  - variable: turbine_oil_pressure
+    source: s7_1500_milling
+
+  - variable: turbine_oil_temperature
+    source: s7_1500_milling
+
+
+  # ===========================================================================
+  # IMBIBITION SYSTEM
+  # ===========================================================================
+
+  - variable: imbibition_water_flow
+    source: s7_1500_milling
+
+
+  # ===========================================================================
+  # JUICE EXTRACTION
+  # ===========================================================================
+
+  - variable: juice_flow
+    source: s7_1500_milling
+
+  - variable: juice_temperature
+    source: s7_1500_milling
+
+
+  # ===========================================================================
+  # BAGASSE OUTPUT
+  # ===========================================================================
+
+  - variable: bagasse_moisture
+    source: s7_1500_milling
