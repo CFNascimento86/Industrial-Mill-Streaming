@@ -1,0 +1,179 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Industrial Variable Seeds
+# =============================================================================
+#
+# Materialização inicial das identidades de variáveis industriais reconhecidas
+# pelo IMS no domínio da Moenda.
+#
+# Este arquivo associa uma identidade de variável industrial:
+#
+#   - a uma definição semântica existente no Information Catalog;
+#   - a um ativo existente no Asset Tree.
+#
+# O Information Catalog permanece como fonte canônica para atributos como:
+#
+#   - display_name;
+#   - information_group;
+#   - information_class;
+#   - engineering_unit;
+#   - temporal_behavior;
+#   - source_type;
+#   - quality_required;
+#   - description.
+#
+# Portanto, esses atributos não são duplicados neste arquivo.
+#
+# Este seed também não contém:
+#
+#   - endereços de PLC;
+#   - DBs ou offsets;
+#   - OPC UA NodeIds;
+#   - Kafka topics;
+#   - contratos Avro;
+#   - polling intervals;
+#   - PostgreSQL columns;
+#   - regras analíticas;
+#   - thresholds.
+#
+# Essas relações pertencem a outras responsabilidades do IMS.
+#
+# Princípios preservados:
+#
+#   - Identity Before Storage
+#   - Identity Is Not Location
+#   - Data Before Transport
+#   - Meaning Defines Continuity
+#
+# =============================================================================
+
+variables:
+
+  # ===========================================================================
+  # FEED PREPARATION
+  # ===========================================================================
+
+  - logical_name: feed_conveyor_speed
+    catalog_item: feed_conveyor_speed
+    asset: feed_conveyor
+    status: active
+
+  - logical_name: feed_conveyor_motor_current
+    catalog_item: feed_conveyor_motor_current
+    asset: feed_conveyor
+    status: active
+
+  - logical_name: chopper_speed
+    catalog_item: chopper_speed
+    asset: chopper
+    status: active
+
+  - logical_name: chopper_motor_current
+    catalog_item: chopper_motor_current
+    asset: chopper
+    status: active
+
+  - logical_name: shredder_speed
+    catalog_item: shredder_speed
+    asset: shredder
+    status: active
+
+  - logical_name: shredder_motor_current
+    catalog_item: shredder_motor_current
+    asset: shredder
+    status: active
+
+  - logical_name: shredder_vibration_rms
+    catalog_item: vibration_rms
+    asset: shredder
+    status: active
+
+  - logical_name: cane_flow
+    catalog_item: cane_flow
+    asset: feed_preparation
+    status: active
+
+
+  # ===========================================================================
+  # MILLING TRAIN — MILL 01
+  # ===========================================================================
+
+  - logical_name: mill_01_upper_roll_speed
+    catalog_item: upper_roll_speed
+    asset: upper_roll_01
+    status: active
+
+  - logical_name: mill_01_hydraulic_pressure
+    catalog_item: hydraulic_pressure
+    asset: hydraulic_system_upper_roll_01
+    status: active
+
+  - logical_name: mill_01_lubrication_oil_pressure
+    catalog_item: lubrication_oil_pressure
+    asset: lubrication_system_01
+    status: active
+
+  - logical_name: mill_01_lubrication_oil_temperature
+    catalog_item: lubrication_oil_temperature
+    asset: lubrication_system_01
+    status: active
+
+
+  # ===========================================================================
+  # MAIN DRIVE
+  # ===========================================================================
+
+  - logical_name: main_drive_01_torque
+    catalog_item: main_drive_01_torque
+    asset: main_drive_01
+    status: active
+
+
+  # ===========================================================================
+  # TURBINE SYSTEM
+  # ===========================================================================
+
+  - logical_name: turbine_oil_pressure
+    catalog_item: turbine_oil_pressure
+    asset: turbine_system
+    status: active
+
+  - logical_name: turbine_oil_temperature
+    catalog_item: turbine_oil_temperature
+    asset: turbine_system
+    status: active
+
+
+  # ===========================================================================
+  # IMBIBITION SYSTEM
+  # ===========================================================================
+
+  - logical_name: imbibition_water_flow
+    catalog_item: imbibition_water_flow
+    asset: imbibition_system
+    status: active
+
+
+  # ===========================================================================
+  # JUICE EXTRACTION
+  # ===========================================================================
+
+  - logical_name: juice_flow
+    catalog_item: juice_flow
+    asset: juice_extraction_system
+    status: active
+
+  - logical_name: juice_temperature
+    catalog_item: juice_temperature
+    asset: juice_extraction_system
+    status: active
+
+
+  # ===========================================================================
+  # BAGASSE OUTPUT
+  # ===========================================================================
+
+  - logical_name: bagasse_moisture
+    catalog_item: bagasse_moisture
+    asset: bagasse_output
+    status: active
