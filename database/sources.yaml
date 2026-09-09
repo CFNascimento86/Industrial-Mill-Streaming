@@ -1,0 +1,43 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Industrial Source Seeds
+# =============================================================================
+#
+# Materialização inicial das fontes técnicas reconhecidas pelo IMS.
+#
+# Uma Source representa o sistema técnico de origem da informação industrial.
+# Ela não representa a identidade da variável nem sua localização técnica
+# específica dentro do sistema de origem.
+#
+# Este arquivo não contém:
+#
+#   - endereços de PLC;
+#   - DBs ou offsets;
+#   - OPC UA NodeIds;
+#   - configurações de protocolo;
+#   - parâmetros de conexão;
+#   - Kafka topics;
+#   - polling intervals;
+#   - credenciais.
+#
+# Essas informações pertencem à configuração do Acquisition Adapter.
+#
+# Princípios preservados:
+#
+#   - Identity Is Not Location
+#   - Data Before Transport
+#
+# =============================================================================
+
+sources:
+
+  - logical_name: s7_1500_milling
+    display_name: Siemens S7-1500 — Moenda
+
+    source_type: plc
+
+    description: >
+      Fonte industrial Siemens S7-1500 responsável pela disponibilização
+      das observações utilizadas pelo IMS no domínio da Moenda.
+
+    status: active
