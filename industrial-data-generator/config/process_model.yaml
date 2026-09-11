@@ -1,0 +1,96 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Reference Industrial Process Model
+# =============================================================================
+#
+# Modelo sintético de referência utilizado pelo Industrial Data Generator.
+#
+# Os valores definidos neste arquivo representam parâmetros de engenharia
+# para reprodução do ambiente IMS e não especificações de uma planta real.
+#
+# =============================================================================
+
+process:
+  logical_name: milling
+
+simulation:
+  update_interval_ms: 1000
+  default_scenario: normal_operation
+
+signals:
+
+  - variable: feed_conveyor_speed
+    behavior: continuous
+    model: bounded_variation
+
+  - variable: feed_conveyor_motor_current
+    behavior: continuous
+    model: load_correlated
+
+  - variable: chopper_speed
+    behavior: continuous
+    model: bounded_variation
+
+  - variable: chopper_motor_current
+    behavior: continuous
+    model: load_correlated
+
+  - variable: shredder_speed
+    behavior: continuous
+    model: bounded_variation
+
+  - variable: shredder_motor_current
+    behavior: continuous
+    model: load_correlated
+
+  - variable: shredder_vibration_rms
+    behavior: continuous
+    model: load_correlated
+
+  - variable: cane_flow
+    behavior: continuous
+    model: process_driver
+
+  - variable: mill_01_upper_roll_speed
+    behavior: continuous
+    model: process_correlated
+
+  - variable: mill_01_hydraulic_pressure
+    behavior: continuous
+    model: load_correlated
+
+  - variable: mill_01_lubrication_oil_pressure
+    behavior: continuous
+    model: bounded_variation
+
+  - variable: mill_01_lubrication_oil_temperature
+    behavior: continuous
+    model: slow_thermal
+
+  - variable: main_drive_01_torque
+    behavior: continuous
+    model: load_correlated
+
+  - variable: turbine_oil_pressure
+    behavior: continuous
+    model: bounded_variation
+
+  - variable: turbine_oil_temperature
+    behavior: continuous
+    model: slow_thermal
+
+  - variable: imbibition_water_flow
+    behavior: continuous
+    model: process_correlated
+
+  - variable: juice_flow
+    behavior: continuous
+    model: process_correlated
+
+  - variable: juice_temperature
+    behavior: continuous
+    model: slow_thermal
+
+  - variable: bagasse_moisture
+    behavior: continuous
+    model: process_correlated
