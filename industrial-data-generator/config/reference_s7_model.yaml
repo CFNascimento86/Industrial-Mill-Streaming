@@ -1,0 +1,120 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Reference Siemens S7 Data Model
+# =============================================================================
+#
+# Modelo técnico de referência utilizado pelo ambiente de engenharia do IMS.
+#
+# Os endereços abaixo pertencem exclusivamente à implementação de referência
+# e não representam endereçamento de uma instalação industrial real.
+#
+# =============================================================================
+
+source: s7_1500_milling
+
+data_blocks:
+
+  - db_number: 100
+    logical_name: feed_preparation
+
+    variables:
+
+      - variable: feed_conveyor_speed
+        byte_offset: 0
+        data_type: real32
+
+      - variable: feed_conveyor_motor_current
+        byte_offset: 4
+        data_type: real32
+
+      - variable: chopper_speed
+        byte_offset: 8
+        data_type: real32
+
+      - variable: chopper_motor_current
+        byte_offset: 12
+        data_type: real32
+
+      - variable: shredder_speed
+        byte_offset: 16
+        data_type: real32
+
+      - variable: shredder_motor_current
+        byte_offset: 20
+        data_type: real32
+
+      - variable: shredder_vibration_rms
+        byte_offset: 24
+        data_type: real32
+
+      - variable: cane_flow
+        byte_offset: 28
+        data_type: real32
+
+
+  - db_number: 110
+    logical_name: mill_01
+
+    variables:
+
+      - variable: mill_01_upper_roll_speed
+        byte_offset: 0
+        data_type: real32
+
+      - variable: mill_01_hydraulic_pressure
+        byte_offset: 4
+        data_type: real32
+
+      - variable: mill_01_lubrication_oil_pressure
+        byte_offset: 8
+        data_type: real32
+
+      - variable: mill_01_lubrication_oil_temperature
+        byte_offset: 12
+        data_type: real32
+
+
+  - db_number: 120
+    logical_name: drive_and_turbine
+
+    variables:
+
+      - variable: main_drive_01_torque
+        byte_offset: 0
+        data_type: real32
+
+      - variable: turbine_oil_pressure
+        byte_offset: 4
+        data_type: real32
+
+      - variable: turbine_oil_temperature
+        byte_offset: 8
+        data_type: real32
+
+
+  - db_number: 130
+    logical_name: extraction_and_imbibition
+
+    variables:
+
+      - variable: imbibition_water_flow
+        byte_offset: 0
+        data_type: real32
+
+      - variable: juice_flow
+        byte_offset: 4
+        data_type: real32
+
+      - variable: juice_temperature
+        byte_offset: 8
+        data_type: real32
+
+
+  - db_number: 140
+    logical_name: bagasse_output
+
+    variables:
+
+      - variable: bagasse_moisture
+        byte_offset: 0
+        data_type: real32
