@@ -1,0 +1,364 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Industrial Process Scenarios
+# =============================================================================
+#
+# Cenários operacionais utilizados pelo Industrial Data Generator para
+# produzir comportamento sintético reproduzível do processo de Moenda.
+#
+# Os cenários não representam especificações ou limites operacionais de uma
+# instalação industrial real.
+#
+# Eles modificam, de forma relativa, o comportamento definido no
+# process_model.yaml.
+#
+# O campo ground_truth existe exclusivamente no ambiente de engenharia para:
+#
+#   - testes;
+#   - validação;
+#   - comparação com inferências futuras do Processing Service.
+#
+# O ground_truth não deve ser publicado como Telemetry nem utilizado pelo
+# IMS como contexto operacional observado.
+#
+# =============================================================================
+
+scenario_model:
+  version: "1.0"
+
+  default_scenario: normal_operation
+
+  transition:
+    default_duration_seconds: 30
+
+  modifiers:
+    nominal: 1.00
+    slightly_low: 0.90
+    low: 0.70
+    very_low: 0.30
+    slightly_high: 1.10
+    high: 1.25
+    very_high: 1.50
+
+
+scenarios:
+
+  # ===========================================================================
+  # NORMAL OPERATION
+  # ===========================================================================
+
+  - logical_name: normal_operation
+    display_name: Operação Normal
+
+    ground_truth:
+      operational_condition: normal
+
+    description: >
+      Condição estável de operação utilizada como referência para os demais
+      cenários do modelo sintético.
+
+    transition_seconds: 30
+
+    effects:
+
+      cane_flow:
+        level: nominal
+
+      feed_conveyor_speed:
+        level: nominal
+
+      feed_conveyor_motor_current:
+        level: nominal
+
+      chopper_motor_current:
+        level: nominal
+
+      shredder_motor_current:
+        level: nominal
+
+      shredder_vibration_rms:
+        level: nominal
+
+      mill_01_upper_roll_speed:
+        level: nominal
+
+      mill_01_hydraulic_pressure:
+        level: nominal
+
+      main_drive_01_torque:
+        level: nominal
+
+      imbibition_water_flow:
+        level: nominal
+
+      juice_flow:
+        level: nominal
+
+      bagasse_moisture:
+        level: nominal
+
+
+  # ===========================================================================
+  # HIGH LOAD
+  # ===========================================================================
+
+  - logical_name: high_load
+    display_name: Alta Carga
+
+    ground_truth:
+      operational_condition: high_load
+
+    description: >
+      Condição caracterizada por aumento sustentado da carga de processo,
+      provocando maior esforço nos equipamentos de preparação e moagem.
+
+    transition_seconds: 45
+
+    effects:
+
+      cane_flow:
+        level: slightly_high
+
+      feed_conveyor_motor_current:
+        level: high
+
+      chopper_motor_current:
+        level: slightly_high
+
+      shredder_motor_current:
+        level: high
+
+      shredder_vibration_rms:
+        level: slightly_high
+
+      mill_01_hydraulic_pressure:
+        level: slightly_high
+
+      main_drive_01_torque:
+        level: high
+
+      juice_flow:
+        level: slightly_high
+
+      imbibition_water_flow:
+        level: slightly_high
+
+
+  # ===========================================================================
+  # LOW FEED
+  # ===========================================================================
+
+  - logical_name: low_feed
+    display_name: Baixa Alimentação
+
+    ground_truth:
+      operational_condition: low_feed
+
+    description: >
+      Condição caracterizada pela redução do fluxo de cana alimentado ao
+      conjunto de moagem.
+
+    transition_seconds: 30
+
+    effects:
+
+      cane_flow:
+        level: low
+
+      feed_conveyor_motor_current:
+        level: low
+
+      chopper_motor_current:
+        level: slightly_low
+
+      shredder_motor_current:
+        level: low
+
+      shredder_vibration_rms:
+        level: slightly_low
+
+      mill_01_hydraulic_pressure:
+        level: slightly_low
+
+      main_drive_01_torque:
+        level: low
+
+      juice_flow:
+        level: low
+
+      imbibition_water_flow:
+        level: slightly_low
+
+
+  # ===========================================================================
+  # OVERLOAD
+  # ===========================================================================
+
+  - logical_name: overload
+    display_name: Sobrecarga
+
+    ground_truth:
+      operational_condition: overload
+
+    description: >
+      Condição transitória de esforço elevado do processo, utilizada para
+      exercitar comportamentos anormais sem representar limites reais
+      de proteção ou trip da planta.
+
+    transition_seconds: 20
+
+    effects:
+
+      cane_flow:
+        level: high
+
+      feed_conveyor_motor_current:
+        level: very_high
+
+      chopper_motor_current:
+        level: high
+
+      shredder_motor_current:
+        level: very_high
+
+      shredder_vibration_rms:
+        level: high
+
+      mill_01_hydraulic_pressure:
+        level: high
+
+      main_drive_01_torque:
+        level: very_high
+
+      juice_flow:
+        level: high
+
+
+  # ===========================================================================
+  # FEED INTERRUPTION
+  # ===========================================================================
+
+  - logical_name: feed_interruption
+    display_name: Interrupção de Alimentação
+
+    ground_truth:
+      operational_condition: feed_interruption
+
+    description: >
+      Redução acentuada do fluxo de cana alimentado ao processo, seguida pela
+      resposta natural das cargas mecânicas e do fluxo de caldo.
+
+    transition_seconds: 15
+
+    effects:
+
+      cane_flow:
+        level: very_low
+
+      feed_conveyor_motor_current:
+        level: very_low
+
+      chopper_motor_current:
+        level: low
+
+      shredder_motor_current:
+        level: low
+
+      shredder_vibration_rms:
+        level: low
+
+      mill_01_hydraulic_pressure:
+        level: low
+
+      main_drive_01_torque:
+        level: very_low
+
+      juice_flow:
+        level: very_low
+
+      imbibition_water_flow:
+        level: low
+
+
+  # ===========================================================================
+  # IMBIBITION DEVIATION
+  # ===========================================================================
+
+  - logical_name: imbibition_deviation
+    display_name: Desvio de Embebição
+
+    ground_truth:
+      operational_condition: imbibition_deviation
+
+    description: >
+      Condição caracterizada por alteração do fornecimento de água de
+      embebição enquanto a alimentação de cana permanece próxima da condição
+      normal.
+
+    transition_seconds: 30
+
+    effects:
+
+      cane_flow:
+        level: nominal
+
+      main_drive_01_torque:
+        level: nominal
+
+      imbibition_water_flow:
+        level: low
+
+      juice_flow:
+        level: slightly_low
+
+      bagasse_moisture:
+        level: slightly_low
+
+
+  # ===========================================================================
+  # PROCESS RECOVERY
+  # ===========================================================================
+
+  - logical_name: process_recovery
+    display_name: Recuperação do Processo
+
+    ground_truth:
+      operational_condition: process_recovery
+
+    description: >
+      Condição transitória utilizada após uma perturbação para representar
+      o retorno progressivo das principais grandezas à operação normal.
+
+    transition_seconds: 60
+
+    effects:
+
+      cane_flow:
+        target: nominal
+
+      feed_conveyor_motor_current:
+        target: nominal
+
+      chopper_motor_current:
+        target: nominal
+
+      shredder_motor_current:
+        target: nominal
+
+      shredder_vibration_rms:
+        target: nominal
+
+      mill_01_hydraulic_pressure:
+        target: nominal
+
+      main_drive_01_torque:
+        target: nominal
+
+      imbibition_water_flow:
+        target: nominal
+
+      juice_flow:
+        target: nominal
+
+      bagasse_moisture:
+        target: nominal
