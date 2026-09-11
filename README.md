@@ -131,6 +131,21 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 ├── database/
 |         ├── processes.yaml
 |         ├── assets.yaml
-|         └── variables.yaml
+|         ├── variables.yaml
+|         └── variables_sources.yaml
+|
+├── industrial-data-generator/
+|    ├── src/
+|    |    ├── process/
+|    │    ├── scenarios/
+|    │    ├── signals/
+|    │    └── s7/
+|    │
+|    ├── config/
+|    │    ├── process_model.yaml
+|    │    └── reference_s7_model.yaml
+|    │
+|    ├── tests/
+|    └── README.md
 |
 ````
