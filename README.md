@@ -137,8 +137,23 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 ├── industrial-data-generator/
 |    ├── src/
 |    |    ├── process/
+|    |    |     ├── __init__.py
+|    |    |     ├── engine.py
+|    │    │     └── state.py
+|    |    |
 |    │    ├── scenarios/
+|    |    |     ├── __init__.py
+|    |    |     └── engine.py
+|    |    |
 |    │    ├── signals/
+|    |    |     ├── __init__.py
+|    |    |     ├── base.py
+|    │    │     ├── bounded_variation.py
+|    │    │     ├── load_correlated.py
+|    │    │     ├── process_driver.py
+|    │    │     ├── process_correlated.py
+|    │    │     └── slow_thermal.py
+|    |    |
 |    │    └── s7/
 |    │
 |    ├── config/
