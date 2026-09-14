@@ -1,0 +1,286 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Industrial Data Generator
+# Operational Scenarios
+# =============================================================================
+#
+# Define condições operacionais sintéticas utilizadas pelo gerador industrial
+# da Reference Plant do IMS.
+#
+# IMPORTANTE:
+#
+# - Os cenários são instrumentos de Engenharia para desenvolvimento e testes.
+# - Não representam procedimentos operacionais de uma planta real.
+# - Ground truth pertence exclusivamente ao ambiente de geração e validação.
+# - Ground truth não deve ser publicado como Telemetry, Event ou Context no IMS.
+# - Modificadores representam influência relativa sobre os modelos de sinais.
+#
+# =============================================================================
+
+
+scenario_model:
+  name: milling_reference_scenarios
+  version: "1.0"
+
+  default_scenario: normal_operation
+
+  transition:
+    default_duration_seconds: 30.0
+
+
+# =============================================================================
+# MODIFIERS
+# =============================================================================
+#
+# Modificadores simbólicos utilizados pelos cenários.
+#
+# O ScenarioEngine resolve esses nomes para valores numéricos antes de
+# entregá-los aos SignalModels.
+#
+# =============================================================================
+
+modifiers:
+
+  nominal: 1.00
+
+  slightly_low: 0.90
+  low: 0.70
+  very_low: 0.30
+
+  slightly_high: 1.10
+  high: 1.25
+  very_high: 1.50
+
+
+# =============================================================================
+# SCENARIOS
+# =============================================================================
+
+scenarios:
+
+
+  # ===========================================================================
+  # NORMAL OPERATION
+  # ===========================================================================
+
+  normal_operation:
+
+    display_name: Normal Operation
+
+    description: >
+      Condição operacional estável utilizada como referência nominal da
+      Reference Plant.
+
+    ground_truth:
+      operational_condition: normal_operation
+
+    transition_seconds: 30.0
+
+    effects:
+
+      cane_flow:
+        level: nominal
+
+
+  # ===========================================================================
+  # HIGH LOAD
+  # ===========================================================================
+  #
+  # A elevação de carga é introduzida principalmente pelo cane_flow.
+  #
+  # Corrente, torque, vibração, pressão hidráulica, vazão de caldo e vazão
+  # de embebição respondem por meio de seus próprios modelos correlacionados.
+  #
+  # Isso evita amplificar duas vezes a mesma causa física.
+  #
+  # ===========================================================================
+
+  high_load:
+
+    display_name: High Load
+
+    description: >
+      Condição de elevada alimentação de cana, provocando aumento sustentado
+      da carga mecânica e das grandezas de processo correlacionadas.
+
+    ground_truth:
+      operational_condition: high_load
+
+    transition_seconds: 45.0
+
+    effects:
+
+      cane_flow:
+        level: slightly_high
+
+
+  # ===========================================================================
+  # LOW FEED
+  # ===========================================================================
+
+  low_feed:
+
+    display_name: Low Feed
+
+    description: >
+      Redução sustentada da alimentação de cana, levando a menor utilização
+      dos equipamentos e redução das grandezas dependentes da carga de
+      processo.
+
+    ground_truth:
+      operational_condition: low_feed
+
+    transition_seconds: 30.0
+
+    effects:
+
+      cane_flow:
+        level: low
+
+
+  # ===========================================================================
+  # OVERLOAD
+  # ===========================================================================
+  #
+  # Overload representa uma condição severa de carga.
+  #
+  # IMPORTANTE:
+  #
+  # overload != trip
+  #
+  # O simulador não inventa lógica de proteção, intertravamento ou atuação
+  # automática. Trip e proteção pertencem à Engenharia de Automação existente.
+  #
+  # ===========================================================================
+
+  overload:
+
+    display_name: Overload
+
+    description: >
+      Condição de carga severamente elevada utilizada para exercitar o
+      comportamento do pipeline diante de valores operacionais extremos,
+      sem assumir ocorrência automática de trip ou intertravamento.
+
+    ground_truth:
+      operational_condition: overload
+
+    transition_seconds: 20.0
+
+    effects:
+
+      cane_flow:
+        level: high
+
+      shredder_vibration_rms:
+        level: slightly_high
+
+
+  # ===========================================================================
+  # FEED INTERRUPTION
+  # ===========================================================================
+  #
+  # O fluxo de cana sofre redução severa, mas não necessariamente chega a zero.
+  #
+  # very_low = 0.30 representa alimentação residual.
+  #
+  # Caso futuramente seja necessário simular parada completa, deve ser criado
+  # explicitamente um modificador "stopped: 0.0".
+  #
+  # ===========================================================================
+
+  feed_interruption:
+
+    display_name: Feed Interruption
+
+    description: >
+      Interrupção significativa da alimentação de cana com presença residual
+      de material, causando redução progressiva das cargas e fluxos associados.
+
+    ground_truth:
+      operational_condition: feed_interruption
+
+    transition_seconds: 15.0
+
+    effects:
+
+      cane_flow:
+        level: very_low
+
+
+  # ===========================================================================
+  # IMBIBITION DEVIATION
+  # ===========================================================================
+  #
+  # Neste cenário, o fluxo de cana permanece nominal.
+  #
+  # A perturbação ocorre especificamente no sistema de embebição, portanto o
+  # modificador atua diretamente sobre imbibition_water_flow.
+  #
+  # Juice flow continua sendo determinado principalmente pela carga de cana.
+  #
+  # Bagasse moisture permanece fora da correlação direta nesta versão porque
+  # sua dinâmica é deliberadamente simplificada no M1.
+  #
+  # ===========================================================================
+
+  imbibition_deviation:
+
+    display_name: Imbibition Deviation
+
+    description: >
+      Condição na qual a alimentação de cana permanece estável, enquanto a
+      vazão de água de embebição apresenta redução significativa.
+
+    ground_truth:
+      operational_condition: imbibition_deviation
+
+    transition_seconds: 30.0
+
+    effects:
+
+      cane_flow:
+        level: nominal
+
+      imbibition_water_flow:
+        level: low
+
+
+  # ===========================================================================
+  # PROCESS RECOVERY
+  # ===========================================================================
+  #
+  # Representa retorno progressivo às condições nominais.
+  #
+  # "target" expressa intenção de convergência, diferentemente de "level",
+  # embora ambos sejam numericamente resolvidos pelo ScenarioEngine.
+  #
+  # O ponto inicial da transição é sempre o modificador efetivo existente no
+  # instante em que o cenário de recuperação é solicitado.
+  #
+  # ===========================================================================
+
+  process_recovery:
+
+    display_name: Process Recovery
+
+    description: >
+      Recuperação progressiva do processo após uma condição operacional
+      perturbada, conduzindo as principais influências de volta ao estado
+      nominal.
+
+    ground_truth:
+      operational_condition: process_recovery
+
+    transition_seconds: 60.0
+
+    effects:
+
+      cane_flow:
+        target: nominal
+
+      imbibition_water_flow:
+        target: nominal
+
+      shredder_vibration_rms:
+        target: nominal
