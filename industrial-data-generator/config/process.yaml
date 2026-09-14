@@ -1,0 +1,350 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Industrial Data Generator
+# Reference Industrial Process Model
+# =============================================================================
+#
+# Define o comportamento sintético das variáveis industriais utilizadas pela
+# implementação de referência do IMS.
+#
+# IMPORTANTE:
+#
+# - Os valores deste arquivo pertencem exclusivamente à Reference Plant do IMS.
+# - Não representam parâmetros, limites ou especificações de uma planta real.
+# - O objetivo é produzir comportamento industrial temporalmente coerente para
+#   desenvolvimento, testes e validação do pipeline de Engenharia de Dados.
+#
+# =============================================================================
+
+
+model:
+  name: milling_reference_process
+  version: "1.0"
+  process: milling
+
+
+# =============================================================================
+# SIMULATION
+# =============================================================================
+
+simulation:
+
+  # Intervalo nominal entre ciclos do ProcessEngine.
+  update_interval_seconds: 1.0
+
+  # Seed determinístico para reprodução da mesma sequência sintética.
+  random_seed: 42
+
+  # Cenário utilizado na inicialização.
+  default_scenario: normal_operation
+
+
+# =============================================================================
+# SIGNALS
+# =============================================================================
+
+signals:
+
+  # ===========================================================================
+  # FEED PREPARATION
+  # ===========================================================================
+
+  - variable: feed_conveyor_speed
+
+    model: bounded_variation
+
+    baseline: 900.0
+
+    parameters:
+      variation_fraction: 0.010
+      response_rate: 0.20
+      min_factor: 0.70
+      max_factor: 1.20
+
+
+  - variable: feed_conveyor_motor_current
+
+    model: load_correlated
+
+    baseline: 72.0
+
+    parameters:
+      driver_signal: cane_flow
+      sensitivity: 0.80
+      variation_fraction: 0.015
+      response_rate: 0.35
+      min_factor: 0.30
+      max_factor: 1.60
+
+
+  - variable: chopper_speed
+
+    model: bounded_variation
+
+    baseline: 750.0
+
+    parameters:
+      variation_fraction: 0.008
+      response_rate: 0.18
+      min_factor: 0.80
+      max_factor: 1.15
+
+
+  - variable: chopper_motor_current
+
+    model: load_correlated
+
+    baseline: 110.0
+
+    parameters:
+      driver_signal: cane_flow
+      sensitivity: 0.95
+      variation_fraction: 0.015
+      response_rate: 0.35
+      min_factor: 0.30
+      max_factor: 1.60
+
+
+  - variable: shredder_speed
+
+    model: bounded_variation
+
+    baseline: 950.0
+
+    parameters:
+      variation_fraction: 0.008
+      response_rate: 0.18
+      min_factor: 0.80
+      max_factor: 1.15
+
+
+  - variable: shredder_motor_current
+
+    model: load_correlated
+
+    baseline: 180.0
+
+    parameters:
+      driver_signal: cane_flow
+      sensitivity: 1.10
+      variation_fraction: 0.015
+      response_rate: 0.35
+      min_factor: 0.30
+      max_factor: 1.70
+
+
+  - variable: shredder_vibration_rms
+
+    model: load_correlated
+
+    baseline: 4.0
+
+    parameters:
+      driver_signal: cane_flow
+      sensitivity: 0.60
+      variation_fraction: 0.025
+      response_rate: 0.25
+      min_factor: 0.40
+      max_factor: 1.80
+
+
+  # Cane flow atua como principal variável motriz do modelo sintético.
+
+  - variable: cane_flow
+
+    model: process_driver
+
+    baseline: 300.0
+
+    parameters:
+      variation_fraction: 0.012
+      response_rate: 0.30
+      min_factor: 0.15
+      max_factor: 1.60
+
+
+  # ===========================================================================
+  # MILL 01
+  # ===========================================================================
+
+  - variable: mill_01_upper_roll_speed
+
+    model: bounded_variation
+
+    baseline: 6.0
+
+    parameters:
+      variation_fraction: 0.010
+      response_rate: 0.20
+      min_factor: 0.70
+      max_factor: 1.20
+
+
+  - variable: mill_01_hydraulic_pressure
+
+    model: load_correlated
+
+    baseline: 180.0
+
+    parameters:
+      driver_signal: cane_flow
+      sensitivity: 0.45
+      variation_fraction: 0.010
+      response_rate: 0.25
+      min_factor: 0.50
+      max_factor: 1.50
+
+
+  - variable: mill_01_lubrication_oil_pressure
+
+    model: bounded_variation
+
+    baseline: 3.5
+
+    parameters:
+      variation_fraction: 0.010
+      response_rate: 0.15
+      min_factor: 0.80
+      max_factor: 1.20
+
+
+  - variable: mill_01_lubrication_oil_temperature
+
+    model: slow_thermal
+
+    baseline: 55.0
+
+    parameters:
+      driver_signal: main_drive_01_torque
+      sensitivity: 0.12
+      variation_fraction: 0.002
+      response_rate: 0.015
+      min_factor: 0.85
+      max_factor: 1.25
+
+
+  # ===========================================================================
+  # MAIN DRIVE 01
+  # ===========================================================================
+
+  - variable: main_drive_01_torque
+
+    model: load_correlated
+
+    baseline: 60.0
+
+    parameters:
+      driver_signal: cane_flow
+      sensitivity: 1.20
+      variation_fraction: 0.012
+      response_rate: 0.35
+      min_factor: 0.20
+      max_factor: 1.80
+
+
+  # ===========================================================================
+  # TURBINE SYSTEM
+  # ===========================================================================
+
+  - variable: turbine_oil_pressure
+
+    model: bounded_variation
+
+    baseline: 4.0
+
+    parameters:
+      variation_fraction: 0.008
+      response_rate: 0.12
+      min_factor: 0.85
+      max_factor: 1.15
+
+
+  - variable: turbine_oil_temperature
+
+    model: slow_thermal
+
+    baseline: 58.0
+
+    parameters:
+      driver_signal: main_drive_01_torque
+      sensitivity: 0.15
+      variation_fraction: 0.002
+      response_rate: 0.012
+      min_factor: 0.85
+      max_factor: 1.25
+
+
+  # ===========================================================================
+  # IMBIBITION
+  # ===========================================================================
+
+  - variable: imbibition_water_flow
+
+    model: process_correlated
+
+    baseline: 90.0
+
+    parameters:
+      driver_signal: cane_flow
+      sensitivity: 0.75
+      variation_fraction: 0.012
+      response_rate: 0.25
+      min_factor: 0.20
+      max_factor: 1.50
+
+
+  # ===========================================================================
+  # JUICE EXTRACTION
+  # ===========================================================================
+
+  - variable: juice_flow
+
+    model: process_correlated
+
+    baseline: 250.0
+
+    parameters:
+      driver_signal: cane_flow
+      sensitivity: 0.90
+      variation_fraction: 0.012
+      response_rate: 0.30
+      min_factor: 0.20
+      max_factor: 1.60
+
+
+  - variable: juice_temperature
+
+    model: slow_thermal
+
+    baseline: 35.0
+
+    parameters:
+      driver_signal: cane_flow
+      sensitivity: 0.08
+      variation_fraction: 0.002
+      response_rate: 0.010
+      min_factor: 0.90
+      max_factor: 1.15
+
+
+  # ===========================================================================
+  # BAGASSE OUTPUT
+  # ===========================================================================
+
+  # Mantido inicialmente como bounded_variation.
+  #
+  # A umidade do bagaço possui relações de processo mais complexas e sua
+  # dependência de embebição, carga e eficiência de extração não será
+  # artificialmente simplificada nesta primeira versão.
+
+  - variable: bagasse_moisture
+
+    model: bounded_variation
+
+    baseline: 50.0
+
+    parameters:
+      variation_fraction: 0.008
+      response_rate: 0.08
+      min_factor: 0.90
+      max_factor: 1.10
