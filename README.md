@@ -154,11 +154,14 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |    │    │     ├── process_correlated.py
 |    │    │     └── slow_thermal.py
 |    |    |
-|    │    └── s7/
+|    │    └── config/
+|    |          ├── __init__.py
+|    |          ├── loader.py
+|    |          └── factory.py
 |    │
 |    ├── config/
-|    │    ├── process_model.yaml
-|    │    └── reference_s7_model.yaml
+|    │    ├── process.yaml
+|    │    └── scenarios.yaml
 |    │
 |    ├── tests/
 |    └── README.md
