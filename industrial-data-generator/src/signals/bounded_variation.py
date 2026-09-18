@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from random import Random
 from .base import SignalContext, SignalModel
 
 
@@ -44,12 +45,32 @@ class BoundedVariationModel(SignalModel):
     def __init__(
         self,
         *,
-        random_generator,
+        random_generator: Random,
         config: BoundedVariationConfig | None = None,
     ) -> None:
         super().__init__(random_generator)
 
         self._config = config or BoundedVariationConfig()
+
+        if self._config.variation_fraction < 0:
+            raise ValueError(
+                "variation_fraction cannot be negative."
+            )
+
+        if self._config.response_rate <= 0:
+            raise ValueError(
+                "response_rate must be greater than zero."
+            )
+
+        if self._config.min_factor < 0:
+            raise ValueError(
+                "min_factor cannot be negative."
+            )
+
+        if self._config.max_factor < self._config.min_factor:
+            raise ValueError(
+                "max_factor cannot be lower than min_factor."
+            )
 
     def next_value(
         self,
@@ -71,6 +92,9 @@ class BoundedVariationModel(SignalModel):
 
         if baseline <= 0:
             raise ValueError("baseline must be greater than zero.")
+
+         if modifier < 0:
+            raise ValueError("modifier cannot be negative.")
 
         target = baseline * modifier
 
