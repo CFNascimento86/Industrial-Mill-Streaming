@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from random import Random
 from .base import SignalContext, SignalModel
 
 
@@ -43,7 +44,6 @@ class LoadCorrelatedConfig:
     sensitivity: float = 1.0
     variation_fraction: float = 0.015
     response_rate: float = 0.35
-
     min_factor: float = 0.20
     max_factor: float = 1.60
 
@@ -63,7 +63,7 @@ class LoadCorrelatedModel(SignalModel):
     def __init__(
         self,
         *,
-        random_generator,
+        random_generator: Random,
         config: LoadCorrelatedConfig,
     ) -> None:
         super().__init__(random_generator)
@@ -78,8 +78,29 @@ class LoadCorrelatedModel(SignalModel):
                 "sensitivity cannot be negative."
             )
 
-        self._config = config
+        
+        if config.variation_fraction < 0:
+            raise ValueError(
+                "variation_fraction cannot be negative."
+            )
 
+        if config.response_rate <= 0:
+            raise ValueError(
+                "response_rate must be greater than zero."
+            )
+
+        if config.min_factor < 0:
+            raise ValueError(
+                "min_factor cannot be negative."
+            )
+
+        if config.max_factor < config.min_factor:
+            raise ValueError(
+                "max_factor cannot be lower than min_factor."
+            )
+
+        self._config = config
+        
     def next_value(
         self,
         *,
