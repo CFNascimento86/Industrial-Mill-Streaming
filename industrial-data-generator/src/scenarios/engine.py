@@ -113,7 +113,6 @@ class ScenarioEngine:
         """
         Retorna o cenário atualmente selecionado.
         """
-
         return self._current_scenario
 
     @property
@@ -121,7 +120,6 @@ class ScenarioEngine:
         """
         Indica se existe uma transição de cenário em andamento.
         """
-
         return self._transition is not None
 
     def set_scenario(
@@ -183,6 +181,11 @@ class ScenarioEngine:
             )
             for signal in all_signals
         }
+
+         if duration == 0:
+            self._effective_modifiers = targets
+            self._transition = None
+            return
 
         self._transition = ScenarioTransition(
             elapsed_seconds=0.0,
@@ -253,8 +256,11 @@ class ScenarioEngine:
 
         targets: dict[str, float] = {}
 
-        for logical_name, effect in scenario.effects.items():
-            symbolic_level = effect.level or effect.target
+         for logical_name, effect in scenario.effects.items():
+            symbolic_level = (
+                effect.level
+                if effect.level is not None
+                else effect.target
 
             if symbolic_level not in self._modifiers:
                 raise KeyError(
