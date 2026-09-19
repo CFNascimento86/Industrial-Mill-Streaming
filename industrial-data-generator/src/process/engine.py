@@ -1,7 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import Mapping
-from process.state import ProcessState
+from .state import ProcessState
 from scenarios.engine import ScenarioEngine
 from signals.base import SignalContext, SignalModel
 
@@ -59,7 +60,6 @@ class ProcessEngine:
         """
         Retorna o estado atual do processo.
         """
-
         return self._state
 
     @property
@@ -67,7 +67,6 @@ class ProcessEngine:
         """
         Retorna o ScenarioEngine utilizado pelo processo.
         """
-
         return self._scenario_engine
 
     def step(self, dt: float) -> dict[str, float]:
@@ -105,17 +104,24 @@ class ProcessEngine:
                 logical_name
             )
 
-            next_value = definition.model.next_value(
-                current_value=current_value,
-                baseline=definition.baseline,
-                modifier=modifier,
-                context=context,
-                dt=dt,
+           next_values[logical_name] = (
+                definition.model.next_value(
+                    current_value=current_value,
+                    baseline=definition.baseline,
+                    modifier=modifier,
+                    context=context,
+                    dt=dt,
+                )
             )
 
-            next_values[logical_name] = next_value
-
-        self._commit(next_values)
+        timestamp = datetime.now(
+            timezone.utc
+        )
+        
+       self._commit(
+            next_values,
+            timestamp=timestamp,
+        )
 
         return self._state.snapshot()
 
@@ -139,12 +145,13 @@ class ProcessEngine:
         """
         Retorna o snapshot atual sem avançar a simulação.
         """
-
         return self._state.snapshot()
 
     def _commit(
         self,
         next_values: Mapping[str, float],
+        *,
+        timestamp: datetime,
     ) -> None:
         """
         Aplica em conjunto os valores calculados para o novo ciclo.
@@ -154,6 +161,7 @@ class ProcessEngine:
             self._state.update_signal(
                 logical_name=logical_name,
                 value=value,
+                timestamp=timestamp,
             )
 
     def _validate_configuration(self) -> None:
