@@ -1,5 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from math import exp
+from random import Random
 from .base import SignalContext, SignalModel
 
 
@@ -40,9 +42,8 @@ class SlowThermalConfig:
         Intensidade da influência relativa do driver sobre o alvo térmico.
     """
 
-    response_rate: float = 0.03
     variation_fraction: float = 0.003
-
+    time_constant_seconds: float = 60.0
     min_factor: float = 0.80
     max_factor: float = 1.30
 
@@ -68,21 +69,31 @@ class SlowThermalModel(SignalModel):
     def __init__(
         self,
         *,
-        random_generator,
+        random_generator: Random,
         config: SlowThermalConfig | None = None,
     ) -> None:
         super().__init__(random_generator)
 
         self._config = config or SlowThermalConfig()
 
-        if self._config.response_rate <= 0:
-            raise ValueError(
-                "response_rate must be greater than zero."
-            )
-
         if self._config.variation_fraction < 0:
             raise ValueError(
                 "variation_fraction cannot be negative."
+            )
+
+        if self._config.time_constant_seconds <= 0:
+            raise ValueError(
+                "time_constant_seconds must be greater than zero."
+            )
+
+        if self._config.min_factor < 0:
+            raise ValueError(
+                "min_factor cannot be negative."
+            )
+
+        if self._config.max_factor < self._config.min_factor:
+            raise ValueError(
+                "max_factor cannot be lower than min_factor."
             )
 
         if self._config.sensitivity < 0:
@@ -136,7 +147,9 @@ class SlowThermalModel(SignalModel):
                 / self._config.driver_baseline
             )
 
-            driver_deviation = relative_driver - 1.0
+            driver_deviation = (
+                relative_driver - 1.0
+            )
 
             driver_factor = (
                 1.0
@@ -159,14 +172,13 @@ class SlowThermalModel(SignalModel):
             baseline * variation
         )
 
-        response = min(
-            self._config.response_rate * dt,
-            1.0,
+         alpha = 1.0 - exp(
+            -dt / self._config.time_constant_seconds
         )
 
         next_value = current_value + (
             noisy_target - current_value
-        ) * response
+        ) * alpha
 
         minimum = baseline * self._config.min_factor
         maximum = baseline * self._config.max_factor
