@@ -24,6 +24,11 @@ SCENARIOS_PATH = (
     / "scenarios.yaml"
 )
 
+REFERENCE_S7_MODEL_PATH = (
+    PROJECT_ROOT
+    / "config"
+    / "reference_s7_model.yaml"
+)
 
 @pytest.fixture
 def process_config():
@@ -42,6 +47,16 @@ def scenario_config():
     """
     return load_scenarios(
         SCENARIOS_PATH
+    )
+
+
+@pytest.fixture
+def reference_s7_config():
+    """
+    Carrega o modelo S7 da Reference Plant.
+    """
+    return load_reference_s7_model(
+        REFERENCE_S7_MODEL_PATH
     )
 
 
