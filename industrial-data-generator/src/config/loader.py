@@ -136,6 +136,50 @@ def load_scenarios(
     return data
 
 
+def load_reference_s7_model(
+    path: str | Path,
+) -> dict[str, Any]:
+    """
+    Carrega e valida a estrutura básica do reference_s7_model.yaml.
+    """
+
+    data = load_yaml(
+        path
+    )
+
+    _require_sections(
+        data=data,
+        required_sections={
+            "model",
+            "data_blocks",
+        },
+        source="reference S7 model",
+    )
+
+    if not isinstance(
+        data["model"],
+        dict,
+    ):
+        raise ConfigurationError(
+            "'model' in reference S7 model must be a mapping."
+        )
+
+    if not isinstance(
+        data["data_blocks"],
+        list,
+    ):
+        raise ConfigurationError(
+            "'data_blocks' in reference S7 model must be a list."
+        )
+
+    if not data["data_blocks"]:
+        raise ConfigurationError(
+            "Reference S7 model must define at least one data block."
+        )
+
+    return data
+
+
 def _require_sections(
     *,
     data: dict[str, Any],
