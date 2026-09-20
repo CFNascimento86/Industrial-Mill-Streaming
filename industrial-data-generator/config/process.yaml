@@ -218,7 +218,7 @@ signals:
       driver_signal: main_drive_01_torque
       sensitivity: 0.12
       variation_fraction: 0.002
-      response_rate: 0.015
+      time_constant_seconds: 60.0
       min_factor: 0.85
       max_factor: 1.25
 
@@ -269,7 +269,7 @@ signals:
       driver_signal: main_drive_01_torque
       sensitivity: 0.15
       variation_fraction: 0.002
-      response_rate: 0.012
+      time_constant_seconds: 75.0
       min_factor: 0.85
       max_factor: 1.25
 
@@ -322,7 +322,7 @@ signals:
       driver_signal: cane_flow
       sensitivity: 0.08
       variation_fraction: 0.002
-      response_rate: 0.010
+      time_constant_seconds: 90.0
       min_factor: 0.90
       max_factor: 1.15
 
