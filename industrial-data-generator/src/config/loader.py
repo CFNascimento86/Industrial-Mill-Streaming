@@ -51,19 +51,28 @@ def load_process_model(
 
     data = load_yaml(path)
 
-    required_sections = {
-        "model",
-        "simulation",
-        "signals",
-    }
-
     _require_sections(
         data=data,
-        required_sections=required_sections,
-        source="process model",
-    )
+        required_sections={
+            "model",
+            "simulation",
+            "signals",
+        },
+        source="process model", 
+        
+    
+    if not isinstance(
+        data["simulation"],
+        dict,
+    ):
+        raise ConfigurationError(
+            "'simulation' in process model must be a mapping."
+        )
 
-    if not isinstance(data["signals"], list):
+    if not isinstance(
+        data["signals"],
+        list,
+    ):
         raise ConfigurationError(
             "'signals' in process model must be a list."
         )
@@ -85,24 +94,36 @@ def load_scenarios(
 
     data = load_yaml(path)
 
-    required_sections = {
-        "scenario_model",
-        "modifiers",
-        "scenarios",
-    }
-
-    _require_sections(
+     _require_sections(
         data=data,
-        required_sections=required_sections,
+        required_sections={
+            "scenario_model",
+            "modifiers",
+            "scenarios",
+        },
         source="scenario model",
     )
 
-    if not isinstance(data["modifiers"], dict):
+    if not isinstance(
+        data["scenario_model"],
+        dict,
+    ):
+        raise ConfigurationError(
+            "'scenario_model' must be a mapping."
+        )
+
+    if not isinstance(
+        data["modifiers"],
+        dict,
+    ):
         raise ConfigurationError(
             "'modifiers' in scenario model must be a mapping."
         )
 
-    if not isinstance(data["scenarios"], dict):
+    if not isinstance(
+        data["scenarios"],
+        dict,
+    ):
         raise ConfigurationError(
             "'scenarios' in scenario model must be a mapping."
         )
@@ -125,7 +146,10 @@ def _require_sections(
     Verifica a presença das seções obrigatórias de uma configuração.
     """
 
-    missing = required_sections - data.keys()
+    missing = (
+        required_sections
+        - set(data)
+    )
 
     if missing:
         missing_sections = ", ".join(
