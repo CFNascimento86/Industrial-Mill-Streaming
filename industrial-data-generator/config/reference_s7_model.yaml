@@ -1,0 +1,203 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Industrial Data Generator
+# Reference S7 Data Model
+# =============================================================================
+#
+# Define a representação técnica Siemens S7 utilizada pela Reference Plant
+# reproduzível do IMS.
+#
+# IMPORTANTE:
+# - Os endereços pertencem exclusivamente à IMS Reference Plant.
+# - Não representam endereços, DBs ou configuração de uma instalação real.
+# - Este arquivo define representação técnica, não identidade industrial.
+# - O significado das variáveis permanece definido pelo Information Catalog
+#   e pelos modelos de identidade do IMS.
+# - Este arquivo deve ser a fonte canônica para o endereçamento S7 da
+#   Reference Plant.
+#
+# =============================================================================
+
+
+model:
+  name: milling_reference_s7_model
+  version: "1.0"
+  process: milling
+
+  controller:
+    family: siemens_s7_1500
+
+  byte_order: big_endian
+
+
+# =============================================================================
+# DATA BLOCKS
+# =============================================================================
+#
+# Os DBs são organizados por responsabilidade industrial.
+# Essa organização existe apenas na Reference Plant e não implica que uma
+# instalação real deva utilizar a mesma estrutura.
+#
+# =============================================================================
+
+data_blocks:
+
+  # ===========================================================================
+  # DB100 — FEED PREPARATION
+  # ===========================================================================
+
+  - db_number: 100
+    logical_name: feed_preparation
+    display_name: Feed Preparation
+
+    description: >
+      Variáveis relacionadas à preparação e alimentação de cana antes do
+      conjunto de moagem.
+
+    size_bytes: 32
+
+    variables:
+
+      - variable: feed_conveyor_speed
+        data_type: REAL
+        byte_offset: 0
+
+      - variable: feed_conveyor_motor_current
+        data_type: REAL
+        byte_offset: 4
+
+      - variable: chopper_speed
+        data_type: REAL
+        byte_offset: 8
+
+      - variable: chopper_motor_current
+        data_type: REAL
+        byte_offset: 12
+
+      - variable: shredder_speed
+        data_type: REAL
+        byte_offset: 16
+
+      - variable: shredder_motor_current
+        data_type: REAL
+        byte_offset: 20
+
+      - variable: shredder_vibration_rms
+        data_type: REAL
+        byte_offset: 24
+
+      - variable: cane_flow
+        data_type: REAL
+        byte_offset: 28
+
+
+  # ===========================================================================
+  # DB110 — MILL 01
+  # ===========================================================================
+
+  - db_number: 110
+    logical_name: mill_01
+    display_name: Mill 01
+
+    description: >
+      Variáveis relacionadas ao primeiro conjunto de moagem e aos seus
+      sistemas diretamente associados.
+
+    size_bytes: 16
+
+    variables:
+
+      - variable: mill_01_upper_roll_speed
+        data_type: REAL
+        byte_offset: 0
+
+      - variable: mill_01_hydraulic_pressure
+        data_type: REAL
+        byte_offset: 4
+
+      - variable: mill_01_lubrication_oil_pressure
+        data_type: REAL
+        byte_offset: 8
+
+      - variable: mill_01_lubrication_oil_temperature
+        data_type: REAL
+        byte_offset: 12
+
+
+  # ===========================================================================
+  # DB120 — MAIN DRIVE / TURBINE
+  # ===========================================================================
+
+  - db_number: 120
+    logical_name: main_drive_turbine
+    display_name: Main Drive / Turbine
+
+    description: >
+      Variáveis relacionadas ao acionamento principal de referência e ao
+      sistema de óleo da turbina.
+
+    size_bytes: 12
+
+    variables:
+
+      - variable: main_drive_01_torque
+        data_type: REAL
+        byte_offset: 0
+
+      - variable: turbine_oil_pressure
+        data_type: REAL
+        byte_offset: 4
+
+      - variable: turbine_oil_temperature
+        data_type: REAL
+        byte_offset: 8
+
+
+  # ===========================================================================
+  # DB130 — EXTRACTION / IMBIBITION
+  # ===========================================================================
+
+  - db_number: 130
+    logical_name: extraction_imbibition
+    display_name: Extraction / Imbibition
+
+    description: >
+      Variáveis relacionadas à embebição e à saída de caldo do processo
+      de moagem.
+
+    size_bytes: 12
+
+    variables:
+
+      - variable: imbibition_water_flow
+        data_type: REAL
+        byte_offset: 0
+
+      - variable: juice_flow
+        data_type: REAL
+        byte_offset: 4
+
+      - variable: juice_temperature
+        data_type: REAL
+        byte_offset: 8
+
+
+  # ===========================================================================
+  # DB140 — BAGASSE
+  # ===========================================================================
+
+  - db_number: 140
+    logical_name: bagasse_output
+    display_name: Bagasse Output
+
+    description: >
+      Variáveis relacionadas à condição do bagaço na saída do processo
+      de moagem.
+
+    size_bytes: 4
+
+    variables:
+
+      - variable: bagasse_moisture
+        data_type: REAL
+        byte_offset: 0
