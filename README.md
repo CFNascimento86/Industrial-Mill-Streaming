@@ -160,16 +160,17 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |    |          └── factory.py
 |    │
 |    ├── config/
-|    │    ├── process.yaml
-|    │    └── scenarios.yaml
+|    │     ├── process.yaml
+|    │     └── scenarios.yaml
 |    │
-|    ├── tests/
-|    |    ├── conftest.py
-|    |    ├── test_causal_correlation.py
-|    |    ├── test_determinism.py
-|    |    ├── test_order_invariance.py
-|    |    └── test_scenario_transition.py
-|    |
-|    └── README.md
+|    └── tests/
+|          ├── conftest.py
+|          ├── test_causal_correlation.py
+|          ├── test_determinism.py
+|          ├── test_order_invariance.py
+|          ├── test_scenario_transition.py
+|          └── README.md
+|     
+|    
 |
 ````
