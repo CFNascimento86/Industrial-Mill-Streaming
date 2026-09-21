@@ -22,8 +22,6 @@ scenario_model:
   name: milling_reference_scenarios
   version: "1.0"
 
-  default_scenario: normal_operation
-
   transition:
     default_duration_seconds: 30.0
 
