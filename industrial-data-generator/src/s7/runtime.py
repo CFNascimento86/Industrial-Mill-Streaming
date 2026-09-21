@@ -1,136 +1,101 @@
-from __future__ import annotations
-from typing import Mapping
-from .encoder import encode_s7_value
-from .model import S7ReferenceModel
+from modbus.encoder import encode_modbus_value
+from modbus.model import ModbusReferenceModel
 
 
-class S7Runtime:
+class ModbusRuntime:
     """
-    Materializa snapshots industriais na imagem de memória S7
-    da Reference Plant.
-    O runtime não implementa comunicação de rede.
+    Mantém a imagem de memória Modbus da IMS Reference Plant.
+    Não implementa comunicação TCP.
     """
 
     def __init__(
         self,
-        *,
-        model: S7ReferenceModel,
+        model: ModbusReferenceModel,
     ) -> None:
         self._model = model
+        self._registers = [0] * self._calculate_register_space()
 
-        self._memory = {
-            data_block.db_number: bytearray(
-                data_block.size_bytes
-            )
-            for data_block
-            in model.data_blocks
-        }
+    def _calculate_register_space(self) -> int:
+        if not self._model.registers:
+            return 0
+
+        return max(
+            register.end_address
+            for register in self._model.registers
+        )
 
     @property
-    def model(
-        self,
-    ) -> S7ReferenceModel:
-        return self._model
+    def size(self) -> int:
+        return len(self._registers)
 
     def write_snapshot(
         self,
-        snapshot: Mapping[str, float],
+        snapshot: dict[str, float],
     ) -> None:
         """
-        Escreve um snapshot industrial completo na memória S7.
+        Materializa um Industrial Snapshot no Register Map.
         """
 
-        for data_block in self._model.data_blocks:
-            memory = self._memory[
-                data_block.db_number
-            ]
+        encoded_values: list[tuple[int, tuple[int, ...]]] = []
 
-            for variable in data_block.variables:
-                try:
-                    value = snapshot[
-                        variable.logical_name
-                    ]
-                except KeyError as exc:
-                    raise KeyError(
-                        f"Snapshot does not contain "
-                        f"'{variable.logical_name}'."
-                    ) from exc
+        for register in self._model.registers:
+            try:
+                value = snapshot[register.logical_name]
+            except KeyError as exc:
+                raise KeyError(
+                    "Snapshot missing Modbus-mapped variable: "
+                    f"{register.logical_name}"
+                ) from exc
 
-                encoded = encode_s7_value(
-                    data_type=variable.data_type,
-                    value=value,
+            encoded = encode_modbus_value(
+                data_type=register.data_type,
+                value=value,
+                encoding=self._model.encoding,
+            )
+
+            if len(encoded) != register.register_count:
+                raise ValueError(
+                    f"Encoded register count mismatch for "
+                    f"'{register.logical_name}'."
                 )
 
-                start = (
-                    variable.byte_offset
-                )
+            encoded_values.append(
+                (register.address, encoded)
+            )
 
-                end = (
-                    start
-                    + variable.size_bytes
-                )
+        # Commit somente após todo o snapshot ter sido codificado.
+        for address, values in encoded_values:
+            self._registers[
+                address:address + len(values)
+            ] = values
 
-                memory[
-                    start:end
-                ] = encoded
-
-    def read_db(
+    def read_registers(
         self,
-        db_number: int,
-    ) -> bytes:
+        address: int,
+        count: int,
+    ) -> tuple[int, ...]:
         """
-        Retorna uma cópia imutável da imagem de um DB.
-        """
-
-        try:
-            memory = self._memory[
-                db_number
-            ]
-        except KeyError as exc:
-            raise KeyError(
-                f"DB{db_number} is not available in the runtime."
-            ) from exc
-
-        return bytes(
-            memory
-        )
-
-    def read_area(
-        self,
-        *,
-        db_number: int,
-        byte_offset: int,
-        size_bytes: int,
-    ) -> bytes:
-        """
-        Retorna uma região específica de um DB.
+        Retorna uma cópia imutável de uma faixa de Holding Registers.
         """
 
-        if byte_offset < 0:
+        if address < 0:
             raise ValueError(
-                "byte_offset cannot be negative."
+                "Modbus address cannot be negative."
             )
 
-        if size_bytes <= 0:
+        if count <= 0:
             raise ValueError(
-                "size_bytes must be greater than zero."
+                "Modbus register count must be greater than zero."
             )
 
-        data = self.read_db(
-            db_number
-        )
+        end_address = address + count
 
-        end = (
-            byte_offset
-            + size_bytes
-        )
-
-        if end > len(data):
+        if end_address > len(self._registers):
             raise ValueError(
-                f"Requested area exceeds DB{db_number} size."
+                "Requested Modbus register range is outside "
+                "the runtime address space."
             )
 
-        return data[
-            byte_offset:end
-        ]
-      
+        return tuple(
+            self._registers[address:end_address]
+        )
