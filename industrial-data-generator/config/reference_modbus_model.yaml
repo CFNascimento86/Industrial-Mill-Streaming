@@ -1,0 +1,144 @@
+# =============================================================================
+# IMS — Industrial Mill Streaming
+# Reference Modbus Model
+#
+# Define a representação técnica das variáveis da IMS Reference Plant
+# através de Modbus TCP.
+# Este arquivo NÃO representa o modelo industrial, comportamento do processo,
+# limites operacionais ou parâmetros de uma planta real.
+#
+# Responsabilidade:
+#   - definir onde uma variável é exposta no espaço Modbus;
+#   - definir seu tipo de dado;
+#   - definir quantidade de registradores;
+#   - definir regras de codificação necessárias à interoperabilidade.
+#
+# Princípio:
+#   Industrial meaning != Modbus representation
+# =============================================================================
+
+model:
+  name: milling_reference_modbus_model
+  version: "1.0"
+  process: milling
+
+protocol:
+  name: modbus_tcp
+
+  # Endereçamento utilizado internamente pelo IMS.
+  # address: 0 corresponde ao primeiro Holding Register.
+  addressing: zero_based
+
+  register_type: holding_register
+
+encoding:
+  # Cada registrador Modbus possui 16 bits.
+  register_size_bits: 16
+
+  # FLOAT32 utiliza dois registradores consecutivos.
+  float32:
+    register_count: 2
+    byte_order: big_endian
+    word_order: big_endian
+
+registers:
+
+  # ---------------------------------------------------------------------------
+  # Feed Preparation
+  # ---------------------------------------------------------------------------
+
+  - logical_name: feed_conveyor_speed
+    address: 0
+    data_type: FLOAT32
+
+  - logical_name: feed_conveyor_motor_current
+    address: 2
+    data_type: FLOAT32
+
+  - logical_name: chopper_speed
+    address: 4
+    data_type: FLOAT32
+
+  - logical_name: chopper_motor_current
+    address: 6
+    data_type: FLOAT32
+
+  - logical_name: shredder_speed
+    address: 8
+    data_type: FLOAT32
+
+  - logical_name: shredder_motor_current
+    address: 10
+    data_type: FLOAT32
+
+  - logical_name: shredder_vibration_rms
+    address: 12
+    data_type: FLOAT32
+
+  - logical_name: cane_flow
+    address: 14
+    data_type: FLOAT32
+
+
+  # ---------------------------------------------------------------------------
+  # Mill 01
+  # ---------------------------------------------------------------------------
+
+  - logical_name: mill_01_upper_roll_speed
+    address: 100
+    data_type: FLOAT32
+
+  - logical_name: mill_01_hydraulic_pressure
+    address: 102
+    data_type: FLOAT32
+
+  - logical_name: mill_01_lubrication_oil_pressure
+    address: 104
+    data_type: FLOAT32
+
+  - logical_name: mill_01_lubrication_oil_temperature
+    address: 106
+    data_type: FLOAT32
+
+
+  # ---------------------------------------------------------------------------
+  # Main Drive / Turbine
+  # ---------------------------------------------------------------------------
+
+  - logical_name: main_drive_01_torque
+    address: 200
+    data_type: FLOAT32
+
+  - logical_name: turbine_oil_pressure
+    address: 202
+    data_type: FLOAT32
+
+  - logical_name: turbine_oil_temperature
+    address: 204
+    data_type: FLOAT32
+
+
+  # ---------------------------------------------------------------------------
+  # Extraction / Imbibition
+  # ---------------------------------------------------------------------------
+
+  - logical_name: imbibition_water_flow
+    address: 300
+    data_type: FLOAT32
+
+  - logical_name: juice_flow
+    address: 302
+    data_type: FLOAT32
+
+  - logical_name: juice_temperature
+    address: 304
+    data_type: FLOAT32
+
+
+  # ---------------------------------------------------------------------------
+  # Bagasse Output
+  # ---------------------------------------------------------------------------
+
+  - logical_name: bagasse_moisture
+    address: 400
+    data_type: FLOAT32
