@@ -1,54 +1,71 @@
-from __future__ import annotations
 import struct
+from modbus.model import ModbusEncoding
 
 
-class S7EncodingError(ValueError):
-    """
-    Erro durante codificação de um valor para representação S7.
-    """
+class ModbusEncodingError(ValueError):
+    pass
 
 
-def encode_s7_value(
-    *,
+def encode_modbus_value(
     data_type: str,
     value: float,
-) -> bytes:
+    encoding: ModbusEncoding,
+) -> tuple[int, ...]:
     """
-    Codifica um valor Python para sua representação binária S7.
+    Codifica um valor Python para registradores Modbus.
     """
-    normalized_type = (
-        data_type.upper()
-    )
 
-    if normalized_type == "REAL":
-        return encode_real(
-            value
-        )
+    if data_type == "FLOAT32":
+        return encode_float32(value, encoding)
 
-    raise S7EncodingError(
-        f"Unsupported S7 data type '{data_type}'."
+    raise ModbusEncodingError(
+        f"Unsupported Modbus data type: {data_type}"
     )
 
 
-def encode_real(
+def encode_float32(
     value: float,
-) -> bytes:
+    encoding: ModbusEncoding,
+) -> tuple[int, int]:
     """
-    Codifica um valor como Siemens S7 REAL.
-    REAL utiliza IEEE 754 binary32 em ordem big-endian.
+    Codifica FLOAT32 IEEE-754 em dois registradores Modbus de 16 bits.
     """
+
     try:
-        return struct.pack(
-            ">f",
-            float(value),
-        )
-    except (
-        TypeError,
-        ValueError,
-        OverflowError,
-        struct.error,
-    ) as exc:
-        raise S7EncodingError(
-            f"Cannot encode '{value}' as S7 REAL."
+        byte_order_prefix = {
+            "big_endian": ">",
+            "little_endian": "<",
+        }[encoding.byte_order]
+    except KeyError as exc:
+        raise ModbusEncodingError(
+            f"Unsupported byte order: {encoding.byte_order}"
         ) from exc
-      
+
+    packed = struct.pack(
+        f"{byte_order_prefix}f",
+        float(value),
+    )
+
+    first_word = packed[0:2]
+    second_word = packed[2:4]
+
+    if encoding.word_order == "little_endian":
+        first_word, second_word = second_word, first_word
+    elif encoding.word_order != "big_endian":
+        raise ModbusEncodingError(
+            f"Unsupported word order: {encoding.word_order}"
+        )
+
+    register_1 = int.from_bytes(
+        first_word,
+        byteorder="big",
+        signed=False,
+    )
+
+    register_2 = int.from_bytes(
+        second_word,
+        byteorder="big",
+        signed=False,
+    )
+
+    return register_1, register_2
