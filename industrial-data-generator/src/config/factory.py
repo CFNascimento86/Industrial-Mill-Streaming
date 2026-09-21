@@ -69,7 +69,7 @@ def build_process_engine(
     )
 
     scenario_engine = _build_scenario_engine(
-        scenario_config=scenario_config,
+        default_scenario = process_config["simulation"]["default_scenario"]
         known_signals=set(baselines),
     )
 
@@ -186,7 +186,6 @@ def _build_signal_random(
 ) -> Random:
     """
     Cria um PRNG determinístico e independente para cada variável.
-
     Isso impede que a ordem de declaração dos sinais altere a sequência
     pseudoaleatória associada a cada modelo.
     """
@@ -517,6 +516,6 @@ def _build_scenario_engine(
     return ScenarioEngine(
         scenarios=scenarios,
         modifiers=modifiers,
-        default_scenario=default_scenario,
+        default_scenario = process_config["simulation"]["default_scenario"]
         default_modifier=default_modifier,
     )
