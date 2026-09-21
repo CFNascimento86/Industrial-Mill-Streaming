@@ -177,10 +177,6 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |          ├── test_determinism.py
 |          ├── test_order_invariance.py
 |          ├── test_scenario_transition.py
-|          ├── test_s7_encoder.py
-|          ├── test_s7_runtime.py
 |          └── README.md
 |     
-|    
-|
 ````
