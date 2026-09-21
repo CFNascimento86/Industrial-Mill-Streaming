@@ -136,11 +136,11 @@ def load_scenarios(
     return data
 
 
-def load_reference_s7_model(
+def load_reference_modbus_model(
     path: str | Path,
 ) -> dict[str, Any]:
     """
-    Carrega e valida a estrutura básica do reference_s7_model.yaml.
+    Carrega e valida a estrutura básica do reference_modbus_model.yaml.
     """
 
     data = load_yaml(
@@ -153,7 +153,7 @@ def load_reference_s7_model(
             "model",
             "data_blocks",
         },
-        source="reference S7 model",
+        source="reference Modbus model",
     )
 
     if not isinstance(
@@ -161,7 +161,7 @@ def load_reference_s7_model(
         dict,
     ):
         raise ConfigurationError(
-            "'model' in reference S7 model must be a mapping."
+            "'model' in reference Modbus model must be a mapping."
         )
 
     if not isinstance(
@@ -169,12 +169,12 @@ def load_reference_s7_model(
         list,
     ):
         raise ConfigurationError(
-            "'data_blocks' in reference S7 model must be a list."
+            "'data_blocks' in reference Modbus model must be a list."
         )
 
     if not data["data_blocks"]:
         raise ConfigurationError(
-            "Reference S7 model must define at least one data block."
+            "Reference Modbus model must define at least one data block."
         )
 
     return data
