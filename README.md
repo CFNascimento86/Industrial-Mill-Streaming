@@ -159,7 +159,7 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |    |    |     ├── loader.py
 |    |    |     └── factory.py
 |    │    |
-|    |    └── s7/
+|    |    └── modbus/
 |    │          ├── __init__.py
 |    │          ├── model.py
 |    │          ├── encoder.py
@@ -168,7 +168,7 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |    | 
 |    ├── config/
 |    │     ├── process.yaml
-|    │     ├── reference_s7_model.yaml
+|    │     ├── reference_modbus_model.yaml
 |    │     └── scenarios.yaml
 |    │
 |    └── tests/
