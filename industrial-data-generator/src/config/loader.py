@@ -143,38 +143,42 @@ def load_reference_modbus_model(
     Carrega e valida a estrutura básica do reference_modbus_model.yaml.
     """
 
-    data = load_yaml(
-        path
-    )
+    data = load_yaml(path)
 
     _require_sections(
         data=data,
         required_sections={
             "model",
-            "data_blocks",
+            "protocol",
+            "encoding",
+            "registers",
         },
         source="reference Modbus model",
     )
 
-    if not isinstance(
-        data["model"],
-        dict,
-    ):
+    if not isinstance(data["model"], dict):
         raise ConfigurationError(
             "'model' in reference Modbus model must be a mapping."
         )
 
-    if not isinstance(
-        data["data_blocks"],
-        list,
-    ):
+    if not isinstance(data["protocol"], dict):
         raise ConfigurationError(
-            "'data_blocks' in reference Modbus model must be a list."
+            "'protocol' in reference Modbus model must be a mapping."
         )
 
-    if not data["data_blocks"]:
+    if not isinstance(data["encoding"], dict):
         raise ConfigurationError(
-            "Reference Modbus model must define at least one data block."
+            "'encoding' in reference Modbus model must be a mapping."
+        )
+
+    if not isinstance(data["registers"], list):
+        raise ConfigurationError(
+            "'registers' in reference Modbus model must be a list."
+        )
+
+    if not data["registers"]:
+        raise ConfigurationError(
+            "Reference Modbus model must define at least one register."
         )
 
     return data
