@@ -1,6 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
 import pytest
+from config.loader import load_reference_modbus_model
 from config.factory import build_process_engine
 from config.loader import (
     load_process_model,
@@ -24,10 +25,10 @@ SCENARIOS_PATH = (
     / "scenarios.yaml"
 )
 
-REFERENCE_S7_MODEL_PATH = (
+REFERENCE_MODBUS_MODEL_PATH = (
     PROJECT_ROOT
     / "config"
-    / "reference_s7_model.yaml"
+    / "reference_modbus_model.yaml"
 )
 
 @pytest.fixture
@@ -51,12 +52,12 @@ def scenario_config():
 
 
 @pytest.fixture
-def reference_s7_config():
+def reference_modbus_config():
     """
-    Carrega o modelo S7 da Reference Plant.
+    Carrega a configuração do modelo Modbus de referência do IMS.
     """
-    return load_reference_s7_model(
-        REFERENCE_S7_MODEL_PATH
+    return load_reference_modbus_model(
+        REFERENCE_MODBUS_MODEL_PATH
     )
 
 
