@@ -159,26 +159,35 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |    |    |     ├── loader.py
 |    |    |     └── factory.py
 |    │    |
-|    |    └── modbus/
-|    │          ├── __init__.py
-|    │          ├── model.py
-|    │          ├── encoder.py
-|    |          ├── factory.py
-|    │          └── runtime.py
-|    | 
+|    |    ├── modbus/
+|    │    |      ├── __init__.py
+|    │    |      ├── model.py
+|    │    |      ├── encoder.py
+|    |    |      ├── factory.py
+|    │    |      └── runtime.py
+|    |    |
+|    |    └── main.py
+|    |
+|    |
 |    ├── config/
 |    │     ├── process.yaml
 |    │     ├── reference_modbus_model.yaml
 |    │     └── scenarios.yaml
+|    |
 |    │
-|    └── tests/
-|          ├── conftest.py
-|          ├── test_causal_correlation.py
-|          ├── test_determinism.py
-|          ├── test_order_invariance.py
-|          ├── test_scenario_transition.py
-|          ├── test_modbus_encoder.py
-|          ├── test_modbus_runtime.py
-|          └── README.md
-|     
+|    ├── tests/
+|    |     ├── conftest.py
+|    |     ├── test_causal_correlation.py
+|    |     ├── test_determinism.py
+|    |     ├── test_order_invariance.py
+|    |     ├── test_scenario_transition.py
+|    |     ├── test_modbus_encoder.py
+|    |     ├── test_modbus_runtime.py
+|    |     └── README.md
+|    |
+|    |
+|    ├── pyproject.toml
+|    └──Dockerfile
+|
+|
 ````
