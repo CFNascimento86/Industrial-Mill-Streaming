@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=77.0.3"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "ims-industrial-data-generator"
+version = "0.1.0"
+description = "Deterministic industrial data generator for the IMS Reference Plant."
+requires-python = ">=3.12"
+
+dependencies = [
+    "PyYAML>=6.0.3,<7.0",
+]
+
+
+[project.optional-dependencies]
+test = [
+    "pytest>=9.1,<10.0",
+]
+
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+[tool.pytest.ini_options]
+minversion = "9.1"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+]
