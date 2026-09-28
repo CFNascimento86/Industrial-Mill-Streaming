@@ -54,6 +54,22 @@ def build_process_engine(
             "'simulation.random_seed' must be an integer."
         ) from exc
 
+    try:
+        default_scenario = simulation["default_scenario"]
+    except KeyError as exc:
+        raise ConfigurationError(
+            "'simulation.default_scenario' is required."
+        ) from exc
+
+    if (
+        not isinstance(default_scenario, str)
+        or not default_scenario.strip()
+    ):
+        raise ConfigurationError(
+            "'simulation.default_scenario' must be "
+            "a non-empty string."
+        )
+
     baselines = _extract_baselines(
         process_config
     )
@@ -69,7 +85,8 @@ def build_process_engine(
     )
 
     scenario_engine = _build_scenario_engine(
-        default_scenario = process_config["simulation"]["default_scenario"]
+        config=scenario_config,
+        default_scenario=default_scenario,
         known_signals=set(baselines),
     )
 
@@ -396,22 +413,21 @@ def _validate_driver(
 
 def _build_scenario_engine(
     *,
-    scenario_config: dict[str, Any],
+    config: dict[str, Any],
+    default_scenario: str,
     known_signals: set[str],
 ) -> ScenarioEngine:
     """
     Constrói o ScenarioEngine e valida referências cruzadas.
     """
 
-    model_config = scenario_config[
-        "scenario_model"
-    ]
+    model_config = config["scenario_model"]
 
     try:
         modifiers = {
             logical_name: float(value)
             for logical_name, value
-            in scenario_config["modifiers"].items()
+            in config["modifiers"].items()
         }
     except (TypeError, ValueError) as exc:
         raise ConfigurationError(
@@ -427,22 +443,18 @@ def _build_scenario_engine(
         )
 
     try:
-        default_scenario = model_config[
-            "default_scenario"
-        ]
-    except KeyError as exc:
-        raise ConfigurationError(
-            "'scenario_model.default_scenario' is required."
-        ) from exc
-
-    default_transition = float(
-        model_config
-        .get("transition", {})
-        .get(
-            "default_duration_seconds",
-            0.0,
+        default_transition = float(
+            model_config
+            .get("transition", {})
+            .get(
+                "default_duration_seconds",
+                0.0,
+            )
         )
-    )
+    except (TypeError, ValueError) as exc:
+        raise ConfigurationError(
+            "Default transition duration must be numeric."
+        ) from exc
 
     if default_transition < 0:
         raise ConfigurationError(
@@ -454,12 +466,12 @@ def _build_scenario_engine(
         ScenarioDefinition,
     ] = {}
 
-    for logical_name, config in (
-        scenario_config["scenarios"].items()
+    for logical_name, scenario_config in (
+        config["scenarios"].items()
     ):
-        raw_effects = config.get(
+        raw_effects = scenario_config.get(
             "effects",
-            {}
+            {},
         )
 
         effects: dict[
@@ -483,12 +495,18 @@ def _build_scenario_engine(
                 ),
             )
 
-        transition_seconds = float(
-            config.get(
-                "transition_seconds",
-                default_transition,
+        try:
+            transition_seconds = float(
+                scenario_config.get(
+                    "transition_seconds",
+                    default_transition,
+                )
             )
-        )
+        except (TypeError, ValueError) as exc:
+            raise ConfigurationError(
+                f"Scenario '{logical_name}' has an invalid "
+                "transition duration."
+            ) from exc
 
         if transition_seconds < 0:
             raise ConfigurationError(
@@ -516,6 +534,6 @@ def _build_scenario_engine(
     return ScenarioEngine(
         scenarios=scenarios,
         modifiers=modifiers,
-        default_scenario = process_config["simulation"]["default_scenario"]
+        default_scenario=default_scenario,
         default_modifier=default_modifier,
     )
