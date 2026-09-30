@@ -164,7 +164,8 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |    │    |      ├── model.py
 |    │    |      ├── encoder.py
 |    |    |      ├── factory.py
-|    │    |      └── runtime.py
+|    |    |      ├── runtime.py
+|    │    |      └── server.py
 |    |    |
 |    |    └── main.py
 |    |
