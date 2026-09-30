@@ -167,6 +167,9 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |    |    |      ├── runtime.py
 |    │    |      └── server.py
 |    |    |
+|    |    ├── scripts/
+│    |    |      └── modbus_black_box_client.py
+|    |    |
 |    |    └── main.py
 |    |
 |    |
