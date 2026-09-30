@@ -1,13 +1,12 @@
 from __future__ import annotations
 import logging
+from modbus.runtime import ModbusRuntime
 from pymodbus.server import ModbusTcpServer
 from pymodbus.simulator import (
     DataType,
     SimData,
     SimDevice,
 )
-
-from modbus.runtime import ModbusRuntime
 
 
 LOGGER = logging.getLogger(
@@ -19,8 +18,8 @@ class PyModbusServerAdapter:
     """
     Materializa o ModbusRuntime através de uma interface Modbus TCP.
     O ModbusRuntime permanece como representação canônica dos
-    Holding Registers. PyModbus é utilizado exclusivamente como
-    mecanismo de comunicação.
+    Holding Registers. O PyModbus é utilizado exclusivamente
+    como mecanismo de comunicação.
     """
 
     HOLDING_REGISTER_FUNCTION_CODE = 3
@@ -59,23 +58,17 @@ class PyModbusServerAdapter:
         self._device_id = device_id
         self._started = False
 
-        holding_registers = [
-            SimData(
-                address=0,
-                count=runtime.size,
-                values=0,
-                datatype=DataType.REGISTERS,
-            )
-        ]
+        # O datastore do PyModbus é apenas a materialização
+        # da imagem de registradores mantida pelo ModbusRuntime.
+        register_block = SimData(
+            address=0,
+            values=[0] * runtime.size,
+            datatype=DataType.REGISTERS,
+        )
 
         self._device = SimDevice(
             id=device_id,
-            simdata=(
-                [],                 # Coils
-                [],                 # Discrete Inputs
-                holding_registers,  # Holding Registers
-                [],                 # Input Registers
-            ),
+            simdata=register_block,
         )
 
         self._server = ModbusTcpServer(
@@ -123,8 +116,8 @@ class PyModbusServerAdapter:
 
     async def sync_from_runtime(self) -> None:
         """
-        Sincroniza a imagem canônica do ModbusRuntime com
-        o datastore exposto pelo servidor.
+        Sincroniza a imagem canônica do ModbusRuntime
+        com o datastore exposto pelo servidor.
         """
 
         if not self._started:
