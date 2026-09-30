@@ -1,26 +1,42 @@
 from __future__ import annotations
+import asyncio
 import logging
-import time
+import os
 from pathlib import Path
 from typing import Any
 from config.factory import build_process_engine
 from config.loader import (
-    load_process,
+    load_process_model,
     load_reference_modbus_model,
     load_scenarios,
 )
 from modbus.factory import build_modbus_reference_model
 from modbus.runtime import ModbusRuntime
+from modbus.server import PyModbusServerAdapter
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CONFIG_DIR = PROJECT_ROOT / "config"
 
-PROCESS_MODEL_PATH = CONFIG_DIR / "process.yaml"
-SCENARIOS_PATH = CONFIG_DIR / "scenarios.yaml"
-REFERENCE_MODBUS_MODEL_PATH = (
-    CONFIG_DIR / "reference_modbus_model.yaml"
+PROCESS_MODEL_PATH = (
+    CONFIG_DIR
+    / "process_model.yaml"
 )
+
+SCENARIOS_PATH = (
+    CONFIG_DIR
+    / "scenarios.yaml"
+)
+
+REFERENCE_MODBUS_MODEL_PATH = (
+    CONFIG_DIR
+    / "reference_modbus_model.yaml"
+)
+
+
+DEFAULT_MODBUS_HOST = "0.0.0.0"
+DEFAULT_MODBUS_PORT = 1502
+DEFAULT_MODBUS_DEVICE_ID = 1
 
 LOG_EVERY_N_CYCLES = 10
 
@@ -50,7 +66,7 @@ def load_configuration() -> tuple[
     Carrega as configurações necessárias ao runtime.
     """
 
-    process_config = load_process(
+    process_config = load_process_model(
         PROCESS_MODEL_PATH
     )
 
@@ -97,19 +113,31 @@ def get_update_interval(
     return update_interval
 
 
-def run_reference_plant() -> None:
+def get_environment_integer(
+    name: str,
+    default: int,
+) -> int:
+    """
+    Obtém uma variável de ambiente inteira.
+    """
+
+    raw_value = os.getenv(
+        name,
+        str(default),
+    )
+
+    try:
+        return int(raw_value)
+    except ValueError as exc:
+        raise ValueError(
+            f"Environment variable '{name}' "
+            "must be an integer."
+        ) from exc
+
+
+async def run_reference_plant() -> None:
     """
     Executa continuamente a IMS Reference Plant.
-
-    Fluxo:
-
-        ProcessEngine
-            ↓
-        Industrial Snapshot
-            ↓
-        ModbusRuntime
-            ↓
-        Holding Register Map
     """
 
     logger = logging.getLogger(
@@ -139,20 +167,59 @@ def run_reference_plant() -> None:
         process_config
     )
 
+    modbus_host = os.getenv(
+        "MODBUS_HOST",
+        DEFAULT_MODBUS_HOST,
+    )
+
+    modbus_port = get_environment_integer(
+        "MODBUS_PORT",
+        DEFAULT_MODBUS_PORT,
+    )
+
+    modbus_device_id = get_environment_integer(
+        "MODBUS_DEVICE_ID",
+        DEFAULT_MODBUS_DEVICE_ID,
+    )
+
+    modbus_server = PyModbusServerAdapter(
+        runtime=modbus_runtime,
+        host=modbus_host,
+        port=modbus_port,
+        device_id=modbus_device_id,
+    )
+
+    # Materializa o estado inicial sem avançar o processo.
+    initial_snapshot = process_engine.snapshot()
+
+    modbus_runtime.write_snapshot(
+        initial_snapshot
+    )
+
+    await modbus_server.start()
+
+    await modbus_server.sync_from_runtime()
+
     logger.info(
         "IMS Reference Plant initialized."
     )
 
     logger.info(
-        "Process: %s | Modbus registers: %d | "
-        "Update interval: %.3f s",
+        "Process: %s | Registers: %d | "
+        "Update interval: %.3f s | "
+        "Modbus TCP: %s:%d | Device ID: %d",
         modbus_model.process,
         modbus_runtime.size,
         update_interval,
+        modbus_host,
+        modbus_port,
+        modbus_device_id,
     )
 
     cycle = 0
-    next_cycle_time = time.monotonic()
+
+    event_loop = asyncio.get_running_loop()
+    next_cycle_time = event_loop.time()
 
     try:
         while True:
@@ -163,6 +230,8 @@ def run_reference_plant() -> None:
             modbus_runtime.write_snapshot(
                 snapshot
             )
+
+            await modbus_server.sync_from_runtime()
 
             cycle += 1
 
@@ -184,33 +253,39 @@ def run_reference_plant() -> None:
                     ],
                 )
 
-            # Mantém cadência baseada em relógio monotônico,
-            # evitando influência de alterações no relógio do SO.
             next_cycle_time += update_interval
 
             sleep_seconds = (
                 next_cycle_time
-                - time.monotonic()
+                - event_loop.time()
             )
 
             if sleep_seconds > 0:
-                time.sleep(
+                await asyncio.sleep(
                     sleep_seconds
                 )
             else:
-                # Se o processamento ultrapassar o período,
-                # reinicia a referência temporal do próximo ciclo.
-                next_cycle_time = time.monotonic()
+                next_cycle_time = (
+                    event_loop.time()
+                )
 
-    except KeyboardInterrupt:
-        logger.info(
-            "IMS Reference Plant stopped by user."
-        )
+    finally:
+        await modbus_server.stop()
 
 
 def main() -> None:
     configure_logging()
-    run_reference_plant()
+
+    try:
+        asyncio.run(
+            run_reference_plant()
+        )
+    except KeyboardInterrupt:
+        logging.getLogger(
+            "ims.reference_plant"
+        ).info(
+            "IMS Reference Plant stopped by user."
+        )
 
 
 if __name__ == "__main__":
