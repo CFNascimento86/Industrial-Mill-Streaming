@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=77.0.3"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "ims-acquisition-service"
+version = "0.1.0"
+description = "Industrial data acquisition service for IMS."
+requires-python = ">=3.12"
+
+dependencies = [
+    "PyYAML>=6.0.3,<7.0",
+    "pymodbus==3.15.0",
+]
+
+
+[project.optional-dependencies]
+test = [
+    "pytest>=9.1,<10.0",
+]
+
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+]
