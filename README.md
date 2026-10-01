@@ -193,5 +193,23 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |    ├── pyproject.toml
 |    └──Dockerfile
 |
-|
+│
+└── services/
+     └── acquisition-service/
+            ├── config/
+            │     └── modbus_mapping.yaml
+            │
+            ├── src/
+            │     └── acquisition_service/
+            │     ├── __init__.py
+            │     ├── model.py
+            │     ├── decoder.py
+            │     ├── mapping.py
+            │     ├── client.py
+            │     └── main.py
+            │
+            ├── tests/
+            ├── pyproject.toml
+            └── README.md
+
 ````
