@@ -209,6 +209,10 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
             │     └── main.py
             │
             ├── tests/
+            |     ├── test_decoder.py
+            |     ├── test_mapping.py
+            |     └── test_read_windows.py
+            |
             ├── pyproject.toml
             └── README.md
 
