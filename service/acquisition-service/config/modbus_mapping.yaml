@@ -1,0 +1,119 @@
+model:
+  name: milling_modbus_acquisition_mapping
+  version: "1.0"
+
+source:
+  logical_name: s7_1500_milling
+
+protocol:
+  name: modbus_tcp
+  addressing: zero_based
+  register_type: holding_register
+
+encoding:
+  float32:
+    register_count: 2
+    byte_order: big_endian
+    word_order: big_endian
+
+variables:
+
+  # ---------------------------------------------------------------------------
+  # Feed Preparation
+  # ---------------------------------------------------------------------------
+
+  - logical_name: feed_conveyor_speed
+    address: 0
+    data_type: FLOAT32
+
+  - logical_name: feed_conveyor_motor_current
+    address: 2
+    data_type: FLOAT32
+
+  - logical_name: chopper_speed
+    address: 4
+    data_type: FLOAT32
+
+  - logical_name: chopper_motor_current
+    address: 6
+    data_type: FLOAT32
+
+  - logical_name: shredder_speed
+    address: 8
+    data_type: FLOAT32
+
+  - logical_name: shredder_motor_current
+    address: 10
+    data_type: FLOAT32
+
+  - logical_name: shredder_vibration_rms
+    address: 12
+    data_type: FLOAT32
+
+  - logical_name: cane_flow
+    address: 14
+    data_type: FLOAT32
+
+
+  # ---------------------------------------------------------------------------
+  # Mill 01
+  # ---------------------------------------------------------------------------
+
+  - logical_name: mill_01_upper_roll_speed
+    address: 100
+    data_type: FLOAT32
+
+  - logical_name: mill_01_hydraulic_pressure
+    address: 102
+    data_type: FLOAT32
+
+  - logical_name: mill_01_lubrication_oil_pressure
+    address: 104
+    data_type: FLOAT32
+
+  - logical_name: mill_01_lubrication_oil_temperature
+    address: 106
+    data_type: FLOAT32
+
+
+  # ---------------------------------------------------------------------------
+  # Main Drive / Turbine
+  # ---------------------------------------------------------------------------
+
+  - logical_name: main_drive_01_torque
+    address: 200
+    data_type: FLOAT32
+
+  - logical_name: turbine_oil_pressure
+    address: 202
+    data_type: FLOAT32
+
+  - logical_name: turbine_oil_temperature
+    address: 204
+    data_type: FLOAT32
+
+
+  # ---------------------------------------------------------------------------
+  # Extraction / Imbibition
+  # ---------------------------------------------------------------------------
+
+  - logical_name: imbibition_water_flow
+    address: 300
+    data_type: FLOAT32
+
+  - logical_name: juice_flow
+    address: 302
+    data_type: FLOAT32
+
+  - logical_name: juice_temperature
+    address: 304
+    data_type: FLOAT32
+
+
+  # ---------------------------------------------------------------------------
+  # Bagasse Output
+  # ---------------------------------------------------------------------------
+
+  - logical_name: bagasse_moisture
+    address: 400
+    data_type: FLOAT32
