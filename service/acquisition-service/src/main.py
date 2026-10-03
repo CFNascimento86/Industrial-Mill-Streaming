@@ -352,6 +352,13 @@ def run_acquisition_service() -> None:
         )
 
         try:
+            logger.info(
+                "Connecting to Modbus source "
+                "%s:%d...",
+                modbus_host,
+                modbus_port,
+            )
+
             client.connect()
 
             logger.info(
