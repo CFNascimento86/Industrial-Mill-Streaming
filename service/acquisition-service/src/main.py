@@ -399,16 +399,26 @@ def run_acquisition_service() -> None:
 def main() -> None:
     configure_logging()
 
+    logger = logging.getLogger(
+        "ims.acquisition"
+    )
+
     try:
         run_acquisition_service()
 
     except KeyboardInterrupt:
-        logging.getLogger(
-            "ims.acquisition"
-        ).info(
+        logger.info(
             "IMS Acquisition Service "
             "stopped by user."
         )
+
+    except Exception:
+        logger.exception(
+            "IMS Acquisition Service terminated "
+            "due to an unexpected error."
+        )
+
+        raise
 
 
 if __name__ == "__main__":
