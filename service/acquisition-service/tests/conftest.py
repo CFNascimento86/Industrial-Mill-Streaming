@@ -21,3 +21,22 @@ def modbus_mapping_config():
     return load_mapping(
         MODBUS_MAPPING_PATH
     )
+
+
+REPOSITORY_ROOT = (
+    Path(__file__)
+    .resolve()
+    .parents[3]
+)
+
+TELEMETRY_SCHEMA_PATH = (
+    REPOSITORY_ROOT
+    / "contracts"
+    / "telemetry"
+    / "telemetry-observation-v1.avsc"
+)
+
+
+@pytest.fixture
+def telemetry_schema_path():
+    return TELEMETRY_SCHEMA_PATH
