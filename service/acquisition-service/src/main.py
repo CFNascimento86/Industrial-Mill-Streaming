@@ -16,7 +16,12 @@ from acquisition_service.model import (
     AcquisitionReading,
     ReadWindow,
 )
-
+from acquisition_service.runtime import (
+    run_reconnecting_loop,
+)
+from acquisition_service.model import (
+    AcquisitionReading,
+)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -88,151 +93,6 @@ def get_environment_float(
             f"Environment variable '{name}' "
             "must be numeric."
         ) from exc
-
-
-def acquire_cycle(
-    *,
-    client: ModbusAcquisitionClient,
-    windows: tuple[ReadWindow, ...],
-) -> tuple[AcquisitionReading, ...]:
-    """
-    Executa um ciclo completo de aquisição.
-    Cada ReadWindow corresponde a uma requisição
-    Modbus FC03 independente.
-    """
-
-    readings: list[
-        AcquisitionReading
-    ] = []
-
-    for window in windows:
-        readings.extend(
-            client.read_window(
-                window
-            )
-        )
-
-    return tuple(readings)
-
-
-def validate_cycle(
-    *,
-    readings: tuple[
-        AcquisitionReading,
-        ...
-    ],
-    expected_count: int,
-) -> None:
-    """
-    Valida a completude estrutural do ciclo adquirido.
-    """
-
-    if len(readings) != expected_count:
-        raise AcquisitionError(
-            "Incomplete acquisition cycle: "
-            f"expected {expected_count} readings, "
-            f"received {len(readings)}."
-        )
-
-    logical_names = {
-        reading.logical_name
-        for reading in readings
-    }
-
-    if len(logical_names) != expected_count:
-        raise AcquisitionError(
-            "Acquisition cycle contains "
-            "duplicated logical names."
-        )
-
-
-def run_connected_loop(
-    *,
-    client: ModbusAcquisitionClient,
-    windows: tuple[ReadWindow, ...],
-    expected_readings: int,
-    poll_interval: float,
-) -> None:
-    """
-    Executa ciclos contínuos enquanto a fonte
-    Modbus permanecer disponível.
-    """
-
-    logger = logging.getLogger(
-        "ims.acquisition"
-    )
-
-    cycle = 0
-    next_cycle_time = time.monotonic()
-
-    while True:
-        cycle_started_at = time.monotonic()
-
-        readings = acquire_cycle(
-            client=client,
-            windows=windows,
-        )
-
-        validate_cycle(
-            readings=readings,
-            expected_count=expected_readings,
-        )
-
-        cycle += 1
-
-        if cycle % LOG_EVERY_N_CYCLES == 0:
-            readings_by_name = {
-                reading.logical_name: reading
-                for reading in readings
-            }
-
-            cycle_duration_ms = (
-                time.monotonic()
-                - cycle_started_at
-            ) * 1000.0
-
-            logger.info(
-                "Cycle=%d | "
-                "readings=%d | "
-                "windows=%d | "
-                "duration_ms=%.2f | "
-                "cane_flow=%.2f | "
-                "main_drive_01_torque=%.2f | "
-                "juice_flow=%.2f | "
-                "bagasse_moisture=%.2f",
-                cycle,
-                len(readings),
-                len(windows),
-                cycle_duration_ms,
-                readings_by_name[
-                    "cane_flow"
-                ].value,
-                readings_by_name[
-                    "main_drive_01_torque"
-                ].value,
-                readings_by_name[
-                    "juice_flow"
-                ].value,
-                readings_by_name[
-                    "bagasse_moisture"
-                ].value,
-            )
-
-        next_cycle_time += poll_interval
-
-        sleep_seconds = (
-            next_cycle_time
-            - time.monotonic()
-        )
-
-        if sleep_seconds > 0:
-            time.sleep(
-                sleep_seconds
-            )
-        else:
-            next_cycle_time = (
-                time.monotonic()
-            )
 
 
 def run_acquisition_service() -> None:
@@ -337,8 +197,10 @@ def run_acquisition_service() -> None:
         poll_interval,
     )
 
-    while True:
-        client = ModbusAcquisitionClient(
+        cycle = 0
+
+    def build_client() -> ModbusAcquisitionClient:
+        return ModbusAcquisitionClient(
             host=modbus_host,
             port=modbus_port,
             device_id=modbus_device_id,
@@ -351,49 +213,67 @@ def run_acquisition_service() -> None:
             timeout=modbus_timeout,
         )
 
-        try:
-            logger.info(
-                "Connecting to Modbus source "
-                "%s:%d...",
-                modbus_host,
-                modbus_port,
-            )
+    def on_connected() -> None:
+        logger.info(
+            "Connected to Modbus source "
+            "%s:%d.",
+            modbus_host,
+            modbus_port,
+        )
 
-            client.connect()
+    def on_cycle(
+        readings: tuple[
+            AcquisitionReading,
+            ...
+        ],
+    ) -> None:
+        nonlocal cycle
 
-            logger.info(
-                "Connected to Modbus source "
-                "%s:%d.",
-                modbus_host,
-                modbus_port,
-            )
+        cycle += 1
 
-            run_connected_loop(
-                client=client,
-                windows=windows,
-                expected_readings=len(
-                    mappings
-                ),
-                poll_interval=poll_interval,
-            )
+        if cycle % LOG_EVERY_N_CYCLES != 0:
+            return
 
-        except AcquisitionError as exc:
-            logger.warning(
-                "Acquisition interrupted: %s",
-                exc,
-            )
-
-        finally:
-            client.close()
+        readings_by_name = {
+            reading.logical_name: reading
+            for reading in readings
+        }
 
         logger.info(
-            "Reconnecting in %.1f seconds.",
-            reconnect_interval,
+            "Cycle=%d | "
+            "readings=%d | "
+            "windows=%d | "
+            "cane_flow=%.2f | "
+            "main_drive_01_torque=%.2f | "
+            "juice_flow=%.2f | "
+            "bagasse_moisture=%.2f",
+            cycle,
+            len(readings),
+            len(windows),
+            readings_by_name[
+                "cane_flow"
+            ].value,
+            readings_by_name[
+                "main_drive_01_torque"
+            ].value,
+            readings_by_name[
+                "juice_flow"
+            ].value,
+            readings_by_name[
+                "bagasse_moisture"
+            ].value,
         )
 
-        time.sleep(
-            reconnect_interval
-        )
+    run_reconnecting_loop(
+        client_factory=build_client,
+        windows=windows,
+        expected_readings=len(mappings),
+        poll_interval=poll_interval,
+        reconnect_interval=reconnect_interval,
+        stop_requested=lambda: False,
+        on_connected=on_connected,
+        on_cycle=on_cycle,
+    )
 
 
 def main() -> None:
