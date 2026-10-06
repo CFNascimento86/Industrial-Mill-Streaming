@@ -1,0 +1,90 @@
+{
+  "type": "record",
+  "name": "TelemetryObservation",
+  "namespace": "ims.telemetry",
+  "doc": "Represents one industrial telemetry observation acquired by IMS.",
+  "fields": [
+    {
+      "name": "telemetry_id",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      },
+      "doc": "Unique identity of this telemetry observation."
+    },
+    {
+      "name": "variable_id",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      },
+      "doc": "Stable industrial identity of the observed variable."
+    },
+    {
+      "name": "variable_logical_name",
+      "type": "string",
+      "doc": "Human-readable logical name of the observed variable."
+    },
+    {
+      "name": "source_id",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      },
+      "doc": "Stable identity of the industrial source."
+    },
+    {
+      "name": "source_logical_name",
+      "type": "string",
+      "doc": "Human-readable logical name of the industrial source."
+    },
+    {
+      "name": "value",
+      "type": "double",
+      "doc": "Normalized numeric value of the observation."
+    },
+    {
+      "name": "quality",
+      "type": {
+        "type": "enum",
+        "name": "TelemetryQuality",
+        "symbols": [
+          "GOOD",
+          "UNCERTAIN",
+          "BAD",
+          "UNKNOWN"
+        ],
+        "default": "UNKNOWN"
+      },
+      "doc": "Industrial data quality associated with the observation."
+    },
+    {
+      "name": "observed_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Time assigned to the industrial observation."
+    },
+    {
+      "name": "observed_at_source",
+      "type": {
+        "type": "enum",
+        "name": "ObservedAtSource",
+        "symbols": [
+          "SOURCE",
+          "ACQUISITION"
+        ]
+      },
+      "doc": "Origin of the timestamp used as observed_at."
+    },
+    {
+      "name": "ingested_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Time when the Acquisition Service transformed the source reading into an IMS telemetry observation."
+    }
+  ]
+}
