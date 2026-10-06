@@ -123,16 +123,25 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |         ├── DM-05 - KPI-Model.md
 |         ├── DM-06 - Logical-Data-Model.md
 |         └── DM-07 - Physical-Data-Model.md
+|
 |   
 ├── information-catalog/
 |         ├── README.md
 |         └── milling-information-catalog.yaml
+|
 |
 ├── database/
 |         ├── processes.yaml
 |         ├── assets.yaml
 |         ├── variables.yaml
 |         └── variables_sources.yaml
+|
+|
+├── contracts/
+│   └── telemetry/
+│       ├── README.md
+│       └── telemetry-observation-v1.avsc   ← próxima etapa
+│
 |
 ├── industrial-data-generator/
 |    ├── src/
