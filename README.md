@@ -206,12 +206,14 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
             │     ├── decoder.py
             │     ├── mapping.py
             │     ├── client.py
+            |     ├── runtime.py
             │     └── main.py
             │
             ├── tests/
             │     ├── conftest.py
             |     ├── test_decoder.py
             |     ├── test_mapping.py
+            |     ├── test_modbus_recovery_integration.py
             |     └── test_read_windows.py
             |
             ├── pyproject.toml
