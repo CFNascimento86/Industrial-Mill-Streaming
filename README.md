@@ -140,7 +140,7 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 ├── contracts/
 │   └── telemetry/
 │       ├── README.md
-│       └── telemetry-observation-v1.avsc   ← próxima etapa
+│       └── telemetry-observation-v1.avsc
 │
 |
 ├── industrial-data-generator/
@@ -196,6 +196,8 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |    |     ├── test_scenario_transition.py
 |    |     ├── test_modbus_encoder.py
 |    |     ├── test_modbus_runtime.py
+|    |     ├── test_telemetry_transformer.py
+|    |     ├── test_telemetry_avro.py
 |    |     └── README.md
 |    |
 |    |
@@ -216,6 +218,10 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
             │     ├── mapping.py
             │     ├── client.py
             |     ├── runtime.py
+            |     ├── avro_codec.py
+            |     ├── transformer.py
+            |     ├── identity.py
+            |     ├── contract.py
             │     └── main.py
             │
             ├── tests/
