@@ -1,0 +1,28 @@
+{
+  "registry_base_url": "http://localhost:8080/apis/registry/v3",
+
+  "group": {
+    "id": "ims.telemetry",
+    "description": "IMS industrial telemetry contracts"
+  },
+
+  "artifact": {
+    "id": "telemetry-observation",
+    "type": "AVRO",
+    "name": "Telemetry Observation",
+    "description": "Canonical IMS contract for industrial telemetry observations.",
+    "version": "1.0.0",
+    "schema_path": "contracts/telemetry/telemetry-observation-v1.avsc"
+  },
+
+  "rules": [
+    {
+      "type": "VALIDITY",
+      "config": "FULL"
+    },
+    {
+      "type": "COMPATIBILITY",
+      "config": "BACKWARD_TRANSITIVE"
+    }
+  ]
+}
