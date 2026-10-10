@@ -1,4 +1,5 @@
 from __future__ import annotations
+from copy import deepcopy
 import json
 from datetime import (
     datetime,
@@ -35,82 +36,78 @@ class TelemetryAvroCodec:
 
     def __init__(
         self,
-        schema_path: str | Path,
+        schema: dict[str, Any],
     ) -> None:
-        self._schema_path = Path(
+        if not isinstance(
+            schema,
+            dict,
+        ):
+            raise AvroContractError(
+                "Avro schema must be a dictionary."
+            )
+
+        try:
+            self._schema = parse_schema(
+                deepcopy(schema)
+            )
+
+        except Exception as exc:
+            raise AvroContractError(
+                "Could not parse Avro schema."
+            ) from exc
+
+    @classmethod
+    def from_path(
+        cls,
+        schema_path: str | Path,
+    ) -> TelemetryAvroCodec:
+        path = Path(
             schema_path
         )
 
-        if not self._schema_path.exists():
+        if not path.exists():
             raise FileNotFoundError(
-                f"Avro schema "
-                f"'{self._schema_path}' "
+                f"Avro schema '{path}' "
                 "was not found."
             )
 
-        with self._schema_path.open(
+        with path.open(
             "r",
             encoding="utf-8",
         ) as file:
-            raw_schema = json.load(file)
+            raw_schema = json.load(
+                file
+            )
 
-        self._schema = parse_schema(
+        return cls(
             raw_schema
         )
 
-    @property
-    def schema(
-        self,
-    ) -> dict[str, Any]:
-        return self._schema
-
-    def serialize(
-        self,
-        observation: TelemetryObservation,
-    ) -> bytes:
-        record = _to_avro_record(
-            observation
-        )
-
-        valid = validate(
-            record,
-            self._schema,
-            raise_errors=True,
-            strict=True,
-        )
-
-        if not valid:
-            raise AvroContractError(
-                "TelemetryObservation does not "
-                "conform to the Avro schema."
+    @classmethod
+    def from_json_text(
+        cls,
+        schema_text: str,
+    ) -> TelemetryAvroCodec:
+        try:
+            raw_schema = json.loads(
+                schema_text
             )
 
-        buffer = BytesIO()
+        except json.JSONDecodeError as exc:
+            raise AvroContractError(
+                "Invalid Avro schema JSON."
+            ) from exc
 
-        schemaless_writer(
-            buffer,
-            self._schema,
-            record,
-            strict=True,
-        )
+        if not isinstance(
+            raw_schema,
+            dict,
+        ):
+            raise AvroContractError(
+                "Avro schema must be a JSON object."
+            )
 
-        return buffer.getvalue()
-
-    def deserialize(
-        self,
-        payload: bytes,
-    ) -> TelemetryObservation:
-        buffer = BytesIO(
-            payload
-        )
-
-        record = schemaless_reader(
-            buffer,
-            self._schema,
-        )
-
-        return _from_avro_record(
-            record
+        return cls(
+            raw_schema
         )
 
 
