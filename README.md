@@ -228,6 +228,7 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
             |     ├── transformer.py
             |     ├── identity.py
             |     ├── contract.py
+            |     ├── registry_client.py
             │     └── main.py
             │
             ├── tests/
@@ -235,6 +236,7 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
             |     ├── test_decoder.py
             |     ├── test_mapping.py
             |     ├── test_modbus_recovery_integration.py
+            |     ├── test_registry_integration.py
             |     └── test_read_windows.py
             |
             ├── pyproject.toml
