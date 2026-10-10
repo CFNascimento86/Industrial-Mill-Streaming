@@ -20,8 +20,8 @@ from acquisition_service.contract import (
 def test_telemetry_schema_is_valid(
     telemetry_schema_path,
 ):
-    codec = TelemetryAvroCodec(
-        telemetry_schema_path
+    codec = TelemetryAvroCodec.from_path(
+    telemetry_schema_path
     )
 
     schema = codec.schema
@@ -44,8 +44,8 @@ def test_telemetry_schema_is_valid(
 def test_telemetry_observation_avro_round_trip(
     telemetry_schema_path,
 ):
-    codec = TelemetryAvroCodec(
-        telemetry_schema_path
+    codec = TelemetryAvroCodec.from_path(
+    telemetry_schema_path
     )
 
     observation = TelemetryObservation(
