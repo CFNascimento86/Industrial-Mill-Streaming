@@ -28,12 +28,8 @@ def test_telemetry_schema_is_valid(
 
     assert schema["type"] == "record"
 
-    assert schema["name"] == (
-        "TelemetryObservation"
-    )
-
-    assert schema["namespace"] == (
-        "ims.telemetry"
+    assert fullname(schema) == (
+    "ims.telemetry.TelemetryObservation"
     )
 
     # Se a construção do codec chegou até aqui,
