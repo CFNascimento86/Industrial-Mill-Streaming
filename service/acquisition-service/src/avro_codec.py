@@ -1,6 +1,6 @@
 from __future__ import annotations
-from copy import deepcopy
 import json
+from copy import deepcopy
 from datetime import (
     datetime,
     timezone,
@@ -25,7 +25,9 @@ from acquisition_service.contract import (
 
 
 class AvroContractError(ValueError):
-    pass
+    """
+    Falha relacionada ao contrato Avro.
+    """
 
 
 class TelemetryAvroCodec:
@@ -61,6 +63,11 @@ class TelemetryAvroCodec:
         cls,
         schema_path: str | Path,
     ) -> TelemetryAvroCodec:
+        """
+        Constrói o codec a partir de um arquivo
+        Avro local.
+        """
+
         path = Path(
             schema_path
         )
@@ -88,6 +95,10 @@ class TelemetryAvroCodec:
         cls,
         schema_text: str,
     ) -> TelemetryAvroCodec:
+        """
+        Constrói o codec a partir de JSON textual.
+        """
+
         try:
             raw_schema = json.loads(
                 schema_text
@@ -108,6 +119,75 @@ class TelemetryAvroCodec:
 
         return cls(
             raw_schema
+        )
+
+    @property
+    def schema(
+        self,
+    ) -> dict[str, Any]:
+        """
+        Retorna o schema Avro parseado.
+        """
+
+        return self._schema
+
+    def serialize(
+        self,
+        observation: TelemetryObservation,
+    ) -> bytes:
+        """
+        Serializa TelemetryObservation
+        em Avro binário schemaless.
+        """
+
+        record = _to_avro_record(
+            observation
+        )
+
+        valid = validate(
+            record,
+            self._schema,
+            raise_errors=True,
+            strict=True,
+        )
+
+        if not valid:
+            raise AvroContractError(
+                "TelemetryObservation does not "
+                "conform to the Avro schema."
+            )
+
+        buffer = BytesIO()
+
+        schemaless_writer(
+            buffer,
+            self._schema,
+            record,
+            strict=True,
+        )
+
+        return buffer.getvalue()
+
+    def deserialize(
+        self,
+        payload: bytes,
+    ) -> TelemetryObservation:
+        """
+        Desserializa um payload Avro binário
+        para TelemetryObservation.
+        """
+
+        buffer = BytesIO(
+            payload
+        )
+
+        record = schemaless_reader(
+            buffer,
+            self._schema,
+        )
+
+        return _from_avro_record(
+            record
         )
 
 
@@ -162,23 +242,33 @@ def _from_avro_record(
 ) -> TelemetryObservation:
     return TelemetryObservation(
         telemetry_id=UUID(
-            str(record["telemetry_id"])
+            str(
+                record["telemetry_id"]
+            )
         ),
 
         variable_id=UUID(
-            str(record["variable_id"])
+            str(
+                record["variable_id"]
+            )
         ),
 
         variable_logical_name=(
-            record["variable_logical_name"]
+            record[
+                "variable_logical_name"
+            ]
         ),
 
         source_id=UUID(
-            str(record["source_id"])
+            str(
+                record["source_id"]
+            )
         ),
 
         source_logical_name=(
-            record["source_logical_name"]
+            record[
+                "source_logical_name"
+            ]
         ),
 
         value=float(
@@ -195,7 +285,9 @@ def _from_avro_record(
 
         observed_at_source=(
             ObservedAtSource(
-                record["observed_at_source"]
+                record[
+                    "observed_at_source"
+                ]
             )
         ),
 
@@ -209,9 +301,7 @@ def _normalize_timestamp(
     value: datetime | int,
 ) -> datetime:
     """
-    Normaliza o retorno da biblioteca para UTC.
-    fastavro possui suporte nativo a timestamp-millis,
-    mas mantemos fallback para o tipo físico long.
+    Normaliza timestamps Avro para UTC.
     """
 
     if isinstance(
