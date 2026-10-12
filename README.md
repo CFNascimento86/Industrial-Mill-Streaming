@@ -131,8 +131,12 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |
 |
 ├── database/
+|         ├── migrations/
+│         |       └── 001_industrial_identity.sql
+|         |
 |         ├── processes.yaml
 |         ├── assets.yaml
+|         ├── sources.yaml
 |         ├── variables.yaml
 |         └── variables_sources.yaml
 |
