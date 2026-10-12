@@ -222,18 +222,19 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
             │
             ├── src/
             │     └── acquisition_service/
-            │     ├── __init__.py
-            │     ├── model.py
-            │     ├── decoder.py
-            │     ├── mapping.py
-            │     ├── client.py
-            |     ├── runtime.py
-            |     ├── avro_codec.py
-            |     ├── transformer.py
-            |     ├── identity.py
-            |     ├── contract.py
-            |     ├── registry_client.py
-            │     └── main.py
+            │            ├── __init__.py
+            │            ├── model.py
+            │            ├── decoder.py
+            │            ├── mapping.py
+            │            ├── client.py
+            |            ├── runtime.py
+            |            ├── avro_codec.py
+            |            ├── transformer.py
+            |            ├── identity.py
+            |            ├── contract.py
+            |            ├── registry_client.py
+            |            ├── postgres_identity.py
+            │            └── main.py
             │
             ├── tests/
             │     ├── conftest.py
