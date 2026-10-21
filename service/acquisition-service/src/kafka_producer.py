@@ -18,29 +18,40 @@ DEFAULT_TELEMETRY_TOPIC = (
 class KafkaPublishError(
     RuntimeError
 ):
+    """Erro base de publicação Kafka."""
+
+
+class KafkaEnqueueError(
+    KafkaPublishError
+):
     """
-    Falha ao publicar ou confirmar
-    uma mensagem Kafka.
+    A mensagem não pôde ser colocada
+    na fila local do producer.
+    """
+
+
+class KafkaDeliveryError(
+    KafkaPublishError
+):
+    """
+    Uma ou mais mensagens receberam
+    falha definitiva de delivery.
+    """
+
+
+class KafkaDeliveryPendingError(
+    KafkaPublishError
+):
+    """
+    O flush expirou, mas ainda existem
+    mensagens pendentes no producer.
     """
 
 
 class KafkaTelemetryProducer:
     """
-    Producer Kafka responsável pelo transporte
-    das observações de telemetria do IMS.
-    Esta classe não conhece Avro, Apicurio ou
-    o contrato TelemetryObservation.
-
-    Ela recebe:
-        - variable_id como chave industrial;
-        - bytes já preparados para publicação.
-
-    Responsabilidades:
-        - construir a Kafka message key;
-        - publicar no tópico de telemetria;
-        - acompanhar delivery reports;
-        - expor falhas de entrega;
-        - confirmar mensagens pendentes.
+    Transporte Kafka das observações
+    de telemetria do IMS.
     """
 
     def __init__(
@@ -65,11 +76,6 @@ class KafkaTelemetryProducer:
                 "topic must not be empty."
             )
 
-        if not client_id:
-            raise ValueError(
-                "client_id must not be empty."
-            )
-
         self._topic = topic
 
         self._delivery_errors: list[
@@ -83,22 +89,9 @@ class KafkaTelemetryProducer:
                 "bootstrap.servers": (
                     bootstrap_servers
                 ),
-
-                "client.id": (
-                    client_id
-                ),
-
-                # Evita duplicação causada
-                # por retries internos do producer.
+                "client.id": client_id,
                 "enable.idempotence": True,
-
-                # Confirmação mais forte
-                # disponível pelo broker.
                 "acks": "all",
-
-                # Mantém compatibilidade de
-                # particionamento com o
-                # Java Kafka client.
                 "partitioner": (
                     "murmur2_random"
                 ),
@@ -115,15 +108,6 @@ class KafkaTelemetryProducer:
     def build_key(
         variable_id: UUID,
     ) -> bytes:
-        """
-        Constrói a chave Kafka canônica.
-
-        Regra IMS:
-            variable_id
-            -> canonical UUID string
-            -> UTF-8
-        """
-
         if not isinstance(
             variable_id,
             UUID,
@@ -144,13 +128,6 @@ class KafkaTelemetryProducer:
         variable_id: UUID,
         value: bytes,
     ) -> None:
-        """
-        Enfileira uma mensagem para publicação.
-        A confirmação física ocorre por meio
-        do delivery callback e será verificada
-        por flush().
-        """
-
         if not isinstance(
             value,
             bytes,
@@ -182,13 +159,11 @@ class KafkaTelemetryProducer:
             BufferError,
             KafkaException,
         ) as exc:
-            raise KafkaPublishError(
+            raise KafkaEnqueueError(
                 "Kafka message could not "
                 "be queued."
             ) from exc
 
-        # Serve callbacks já disponíveis
-        # sem bloquear o fluxo.
         self._producer.poll(0)
 
     def flush(
@@ -197,8 +172,15 @@ class KafkaTelemetryProducer:
         timeout: float = 10.0,
     ) -> None:
         """
-        Aguarda confirmação das mensagens
-        pendentes e propaga falhas de entrega.
+        Aguarda as mensagens pendentes.
+
+        Importante:
+        timeout != delivery failure.
+
+        Se ainda existirem mensagens na fila
+        ao final do timeout, elas permanecem
+        pendentes e flush() pode ser chamado
+        novamente.
         """
 
         if timeout <= 0:
@@ -224,16 +206,18 @@ class KafkaTelemetryProducer:
                 delivery_errors
             )
 
-            raise KafkaPublishError(
+            raise KafkaDeliveryError(
                 "Kafka delivery failed: "
                 f"{details}"
             )
 
         if remaining != 0:
-            raise KafkaPublishError(
-                "Kafka flush timed out with "
-                f"{remaining} message(s) "
-                "still pending."
+            raise (
+                KafkaDeliveryPendingError(
+                    "Kafka delivery is still "
+                    f"pending for {remaining} "
+                    "message(s)."
+                )
             )
 
     def _on_delivery(
@@ -241,11 +225,6 @@ class KafkaTelemetryProducer:
         error: KafkaError | None,
         message: Message,
     ) -> None:
-        """
-        Recebe o resultado final da entrega
-        informado pelo librdkafka.
-        """
-
         if error is None:
             return
 
