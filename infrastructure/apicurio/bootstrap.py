@@ -23,10 +23,51 @@ REPOSITORY_ROOT = (
     .parents[2]
 )
 
-CONFIG_PATH = (
+DEFAULT_CONFIG_PATH = (
     SCRIPT_PATH
-    .with_name("bootstrap-config.json")
+    .with_name(
+        "bootstrap-config.json"
+    )
 )
+
+
+def resolve_config_path() -> Path:
+    configured = os.getenv(
+        "APICURIO_BOOTSTRAP_CONFIG"
+    )
+
+    if not configured:
+        return DEFAULT_CONFIG_PATH
+
+    path = Path(
+        configured
+    )
+
+    if not path.is_absolute():
+        path = (
+            REPOSITORY_ROOT
+            / path
+        )
+
+    return path
+
+
+def load_config() -> dict[str, Any]:
+    config_path = (
+        resolve_config_path()
+    )
+
+    if not config_path.exists():
+        raise BootstrapError(
+            "Bootstrap config not found: "
+            f"{config_path}"
+        )
+
+    with config_path.open(
+        "r",
+        encoding="utf-8",
+    ) as file:
+        return json.load(file)
 
 
 def load_config() -> dict[str, Any]:
