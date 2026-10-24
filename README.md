@@ -153,7 +153,8 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 ├── infrastructure/
 |         └── apicurio/
 |         ├── bootstrap.py
-|         └── bootstrap-config.json
+|         ├── bootstrap-config.json
+|         └── bootstrap-context-config.json
 |
 |
 ├── industrial-data-generator/
