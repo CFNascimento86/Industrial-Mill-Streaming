@@ -1,0 +1,28 @@
+{
+  "registry_base_url": "http://localhost:8080/apis/registry/v3",
+
+  "group": {
+    "id": "ims.context",
+    "description": "IMS operational context contracts"
+  },
+
+  "artifact": {
+    "id": "operational-context-transition",
+    "type": "AVRO",
+    "name": "Operational Context Transition",
+    "description": "Canonical IMS contract for operational context state transitions.",
+    "version": "1.0.0",
+    "schema_path": "contracts/context/operational-context-transition-v1.avsc"
+  },
+
+  "rules": [
+    {
+      "type": "VALIDITY",
+      "config": "FULL"
+    },
+    {
+      "type": "COMPATIBILITY",
+      "config": "BACKWARD_TRANSITIVE"
+    }
+  ]
+}
