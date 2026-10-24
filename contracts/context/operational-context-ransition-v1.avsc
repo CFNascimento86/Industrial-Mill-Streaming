@@ -1,0 +1,129 @@
+{
+  "type": "record",
+  "name": "OperationalContextTransition",
+  "namespace": "ims.context",
+  "doc": "Represents an operational context state establishment or transition produced by IMS.",
+  "fields": [
+    {
+      "name": "context_transition_id",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      },
+      "doc": "Unique identity of this operational context transition."
+    },
+    {
+      "name": "context_logical_name",
+      "type": "string",
+      "doc": "Stable logical name of the operational context dimension."
+    },
+    {
+      "name": "transition_type",
+      "type": {
+        "type": "enum",
+        "name": "ContextTransitionType",
+        "symbols": [
+          "ESTABLISHED",
+          "CHANGED"
+        ]
+      },
+      "doc": "Indicates whether the context state was initially established or changed from a previously known state."
+    },
+    {
+      "name": "previous_state",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Previously known context state. Null when the state is being established for the first time."
+    },
+    {
+      "name": "current_state",
+      "type": "string",
+      "doc": "Operational context state that became effective."
+    },
+    {
+      "name": "scope_type",
+      "type": {
+        "type": "enum",
+        "name": "ContextScopeType",
+        "symbols": [
+          "PROCESS",
+          "ASSET"
+        ]
+      },
+      "doc": "Industrial entity type to which the context applies."
+    },
+    {
+      "name": "scope_id",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      },
+      "doc": "Stable industrial identity of the context scope."
+    },
+    {
+      "name": "scope_logical_name",
+      "type": "string",
+      "doc": "Human-readable logical name of the context scope."
+    },
+    {
+      "name": "effective_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Industrial time from which the new context state is considered effective."
+    },
+    {
+      "name": "produced_at",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Time when IMS materialized this context transition."
+    },
+    {
+      "name": "origin",
+      "type": {
+        "type": "enum",
+        "name": "ContextOrigin",
+        "symbols": [
+          "OBSERVED",
+          "INFERRED"
+        ]
+      },
+      "doc": "Indicates whether the context was directly observed or inferred from industrial evidence."
+    },
+    {
+      "name": "evidence_telemetry_ids",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "logicalType": "uuid"
+        }
+      },
+      "doc": "Telemetry observations that contributed evidence to this context transition."
+    },
+    {
+      "name": "inference_rule_id",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Logical identity of the inference rule when origin is INFERRED."
+    },
+    {
+      "name": "inference_rule_version",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Version of the inference rule when origin is INFERRED."
+    }
+  ]
+}
