@@ -53,25 +53,7 @@ def resolve_config_path() -> Path:
 
 
 def load_config() -> dict[str, Any]:
-    config_path = (
-        resolve_config_path()
-    )
-
-    if not config_path.exists():
-        raise BootstrapError(
-            "Bootstrap config not found: "
-            f"{config_path}"
-        )
-
-    with config_path.open(
-        "r",
-        encoding="utf-8",
-    ) as file:
-        return json.load(file)
-
-
-def load_config() -> dict[str, Any]:
-    with CONFIG_PATH.open(
+    with resolve_config_path.open(
         "r",
         encoding="utf-8",
     ) as file:
