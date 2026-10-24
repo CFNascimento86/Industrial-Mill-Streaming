@@ -142,10 +142,13 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
 |
 |
 ├── contracts/
-│    └── telemetry/
-│         ├── README.md
-│         └── telemetry-observation-v1.avsc
-│
+│      ├── telemetry/
+│      |     ├── README.md
+│      |     └── telemetry-observation-v1.avsc
+│      |    
+|      └── context/
+|            └── operational-context-transition-v1.avsc
+|
 |
 ├── infrastructure/
 |         └── apicurio/
