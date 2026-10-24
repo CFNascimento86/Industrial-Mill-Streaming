@@ -249,6 +249,9 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
      |
      |
      └── processing-service/
+            ├── config/
+            |     └── context_inference.yaml
+            |
             ├── src/
             │     ├── __init__.py
             │     ├── contract.py
