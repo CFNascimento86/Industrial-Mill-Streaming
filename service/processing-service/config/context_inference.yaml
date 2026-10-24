@@ -1,0 +1,30 @@
+model:
+  name: milling_operational_context_inference
+  version: "1.0"
+
+contexts:
+
+  milling_feed_load_condition:
+
+    source_variable: cane_flow
+
+    scope:
+      type: process
+      logical_name: milling
+
+    states:
+      low: LOW
+      normal: NORMAL
+      high: HIGH
+
+    thresholds:
+
+      low:
+        enter_below_or_equal: 255.0
+        exit_above_or_equal: 270.0
+
+      high:
+        enter_above_or_equal: 325.0
+        exit_below_or_equal: 315.0
+
+    initial_state: NORMAL
