@@ -5,12 +5,25 @@ from enum import StrEnum
 from uuid import UUID
 
 
-class FeedLoadCondition(
-    StrEnum
-):
+class FeedLoadCondition(StrEnum):
     LOW = "LOW"
     NORMAL = "NORMAL"
     HIGH = "HIGH"
+
+
+class ContextTransitionType(StrEnum):
+    ESTABLISHED = "ESTABLISHED"
+    CHANGED = "CHANGED"
+
+
+class ContextScopeType(StrEnum):
+    PROCESS = "PROCESS"
+    ASSET = "ASSET"
+
+
+class ContextOrigin(StrEnum):
+    OBSERVED = "OBSERVED"
+    INFERRED = "INFERRED"
 
 
 @dataclass(
@@ -19,21 +32,33 @@ class FeedLoadCondition(
 )
 class ContextTransition:
     """
-    Representa uma mudança inferida
-    de condição operacional.
-    Ainda não representa a materialização
-    física de Context Instance.
+    Informação industrial derivada que representa
+    o estabelecimento ou mudança de um contexto
+    operacional.
     """
 
-    context_name: str
+    context_transition_id: UUID
 
-    previous_state: FeedLoadCondition
-    current_state: FeedLoadCondition
+    context_logical_name: str
+
+    transition_type: ContextTransitionType
+
+    previous_state: str | None
+    current_state: str
+
+    scope_type: ContextScopeType
+    scope_id: UUID
+    scope_logical_name: str
 
     effective_at: datetime
+    produced_at: datetime
 
-    evidence_telemetry_id: UUID
-    evidence_variable_id: UUID
+    origin: ContextOrigin
 
-    evidence_variable_logical_name: str
-    evidence_value: float
+    evidence_telemetry_ids: tuple[
+        UUID,
+        ...,
+    ]
+
+    inference_rule_id: str | None
+    inference_rule_version: str | None
