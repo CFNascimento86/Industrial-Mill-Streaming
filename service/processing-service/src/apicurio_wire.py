@@ -70,3 +70,52 @@ def parse_apicurio_payload(
             HEADER_SIZE:
         ],
     )
+
+def frame_apicurio_payload(
+    *,
+    content_id: int,
+    payload: bytes,
+) -> bytes:
+    if (
+        isinstance(content_id, bool)
+        or not isinstance(
+            content_id,
+            int,
+        )
+        or content_id <= 0
+    ):
+        raise ApicurioWireFormatError(
+            "content_id must be "
+            "a positive integer."
+        )
+
+    if not isinstance(
+        payload,
+        bytes,
+    ):
+        raise TypeError(
+            "payload must be bytes."
+        )
+
+    if not payload:
+        raise ApicurioWireFormatError(
+            "payload cannot be empty."
+        )
+
+    try:
+        header = _HEADER_STRUCT.pack(
+            MAGIC_BYTE,
+            content_id,
+        )
+
+    except struct.error as exc:
+        raise ApicurioWireFormatError(
+            "content_id cannot be "
+            "represented by the "
+            "Apicurio wire header."
+        ) from exc
+
+    return (
+        header
+        + payload
+    )
