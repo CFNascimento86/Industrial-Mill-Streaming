@@ -1,6 +1,8 @@
 from __future__ import annotations
 import json
 from typing import Any
+from dataclasses import dataclass
+from urllib.parse import quote
 
 from urllib.error import (
     HTTPError,
@@ -152,3 +154,22 @@ class ApicurioRegistryClient:
             )
 
         return schema
+
+@dataclass(
+    frozen=True,
+    slots=True,
+)
+class RegisteredAvroContract:
+    group_id: str
+    artifact_id: str
+    version: str
+
+    global_id: int
+    content_id: int
+
+    state: str
+
+    schema: dict[
+        str,
+        Any,
+    ]
