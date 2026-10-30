@@ -1,14 +1,14 @@
 from __future__ import annotations
 import json
-from typing import Any
 from dataclasses import dataclass
-from urllib.parse import quote
+from typing import Any
 
 from urllib.error import (
     HTTPError,
     URLError,
 )
 
+from urllib.parse import quote
 from urllib.request import (
     Request,
     urlopen,
@@ -18,22 +18,66 @@ from urllib.request import (
 class RegistryError(
     RuntimeError
 ):
-    pass
+    """
+    Falha de comunicação ou resolução
+    no Apicurio Registry.
+    """
 
 
 class RegistryContractError(
     RegistryError
 ):
-    pass
+    """
+    O Registry respondeu, mas o contrato
+    encontrado não corresponde ao esperado.
+    """
+
+
+@dataclass(
+    frozen=True,
+    slots=True,
+)
+class RegisteredAvroContract:
+    """
+    Representa uma versão Avro
+    governada pelo Apicurio Registry.
+    """
+
+    group_id: str
+    artifact_id: str
+    version: str
+
+    global_id: int
+    content_id: int
+
+    state: str
+
+    schema: dict[
+        str,
+        Any,
+    ]
 
 
 class ApicurioRegistryClient:
+    """
+    Cliente read-only do Apicurio Registry.
+
+    Responsabilidades:
+
+    - resolver schema pelo contentId
+      recebido no wire format;
+
+    - resolver uma versão explícita
+      utilizada por producers.
+    """
+
     def __init__(
         self,
         base_url: str,
         *,
         timeout: float = 5.0,
     ) -> None:
+
         if not base_url.strip():
             raise ValueError(
                 "Registry base URL "
@@ -42,8 +86,8 @@ class ApicurioRegistryClient:
 
         if timeout <= 0:
             raise ValueError(
-                "Registry timeout must "
-                "be positive."
+                "Registry timeout "
+                "must be positive."
             )
 
         self._base_url = (
@@ -56,8 +100,16 @@ class ApicurioRegistryClient:
         self,
         content_id: int,
     ) -> dict[str, Any]:
+        """
+        Resolve um schema Avro através
+        do contentId presente na mensagem.
+        """
+
         if (
-            isinstance(content_id, bool)
+            isinstance(
+                content_id,
+                bool,
+            )
             or not isinstance(
                 content_id,
                 int,
@@ -69,67 +121,12 @@ class ApicurioRegistryClient:
                 "a positive integer."
             )
 
-        url = (
-            f"{self._base_url}"
-            f"/ids/contentIds/"
-            f"{content_id}"
-        )
-
-        request = Request(
-            url=url,
-            method="GET",
-            headers={
-                "Accept": (
-                    "application/json"
-                ),
-            },
-        )
-
-        try:
-            with urlopen(
-                request,
-                timeout=self._timeout,
-            ) as response:
-                body = response.read()
-
-        except HTTPError as exc:
-            raise RegistryError(
-                "Apicurio request failed: "
-                f"GET {url} -> "
-                f"HTTP {exc.code}."
-            ) from exc
-
-        except URLError as exc:
-            raise RegistryError(
-                "Could not reach "
-                "Apicurio Registry: "
-                f"{exc.reason}"
-            ) from exc
-
-        try:
-            schema = json.loads(
-                body.decode(
-                    "utf-8"
-                )
+        schema = self._get_json_path(
+            (
+                "/ids/contentIds/"
+                f"{content_id}"
             )
-
-        except (
-            UnicodeDecodeError,
-            json.JSONDecodeError,
-        ) as exc:
-            raise RegistryContractError(
-                "Apicurio returned "
-                "invalid schema JSON."
-            ) from exc
-
-        if not isinstance(
-            schema,
-            dict,
-        ):
-            raise RegistryContractError(
-                "Registry content must "
-                "be a JSON object."
-            )
+        )
 
         if schema.get(
             "type"
@@ -156,185 +153,261 @@ class ApicurioRegistryClient:
         return schema
 
     def resolve_avro_contract(
-    self,
-    *,
-    group_id: str,
-    artifact_id: str,
-    version: str,
-) -> RegisteredAvroContract:
+        self,
+        *,
+        group_id: str,
+        artifact_id: str,
+        version: str,
+    ) -> RegisteredAvroContract:
+        """
+        Resolve uma versão contratual
+        explícita para utilização por
+        um producer.
+        """
 
-    group = quote(
-        group_id,
-        safe="",
-    )
+        if not group_id.strip():
+            raise ValueError(
+                "group_id cannot be empty."
+            )
 
-    artifact = quote(
-        artifact_id,
-        safe="",
-    )
+        if not artifact_id.strip():
+            raise ValueError(
+                "artifact_id cannot be empty."
+            )
 
-    version_value = quote(
-        version,
-        safe="",
-    )
+        if not version.strip():
+            raise ValueError(
+                "version cannot be empty."
+            )
 
-    version_path = (
-        f"/groups/{group}"
-        f"/artifacts/{artifact}"
-        f"/versions/{version_value}"
-    )
-
-    metadata = self._get_json_path(
-        version_path
-    )
-
-    content_id = metadata.get(
-        "contentId"
-    )
-
-    global_id = metadata.get(
-        "globalId"
-    )
-
-    state = metadata.get(
-        "state"
-    )
-
-    if (
-        not isinstance(
-            content_id,
-            int,
-        )
-        or isinstance(
-            content_id,
-            bool,
-        )
-        or content_id <= 0
-    ):
-        raise RegistryContractError(
-            "Invalid contentId returned "
-            "by Apicurio."
+        group = quote(
+            group_id,
+            safe="",
         )
 
-    if (
-        not isinstance(
-            global_id,
-            int,
-        )
-        or isinstance(
-            global_id,
-            bool,
-        )
-    ):
-        raise RegistryContractError(
-            "Invalid globalId returned "
-            "by Apicurio."
+        artifact = quote(
+            artifact_id,
+            safe="",
         )
 
-    if state not in {
-        "ENABLED",
-        "DEPRECATED",
-    }:
-        raise RegistryContractError(
-            "Unsupported artifact "
-            f"state '{state}'."
+        version_value = quote(
+            version,
+            safe="",
         )
 
-    schema = self._get_json_path(
-        f"{version_path}/content"
-    )
+        version_path = (
+            f"/groups/{group}"
+            f"/artifacts/{artifact}"
+            f"/versions/{version_value}"
+        )
 
-    return RegisteredAvroContract(
-        group_id=group_id,
-        artifact_id=artifact_id,
-        version=version,
-        global_id=global_id,
-        content_id=content_id,
-        state=state,
-        schema=schema,
-    )
-
-    def _get_json_path(
-    self,
-    path: str,
-) -> dict[str, Any]:
-
-    url = (
-        f"{self._base_url}/"
-        f"{path.lstrip('/')}"
-    )
-
-    request = Request(
-        url=url,
-        method="GET",
-        headers={
-            "Accept": "application/json",
-        },
-    )
-
-    try:
-        with urlopen(
-            request,
-            timeout=self._timeout,
-        ) as response:
-            body = response.read()
-
-    except HTTPError as exc:
-        raise RegistryError(
-            "Apicurio request failed: "
-            f"GET {url} -> "
-            f"HTTP {exc.code}."
-        ) from exc
-
-    except URLError as exc:
-        raise RegistryError(
-            "Could not reach "
-            "Apicurio Registry: "
-            f"{exc.reason}"
-        ) from exc
-
-    try:
-        result = json.loads(
-            body.decode(
-                "utf-8"
+        metadata = (
+            self._get_json_path(
+                version_path
             )
         )
 
-    except (
-        UnicodeDecodeError,
-        json.JSONDecodeError,
-    ) as exc:
-        raise RegistryContractError(
-            "Apicurio returned "
-            "invalid JSON."
-        ) from exc
-
-    if not isinstance(
-        result,
-        dict,
-    ):
-        raise RegistryContractError(
-            "Registry response must "
-            "be a JSON object."
+        resolved_group = (
+            metadata.get(
+                "groupId"
+            )
         )
 
-    return result
+        resolved_artifact = (
+            metadata.get(
+                "artifactId"
+            )
+        )
 
-@dataclass(
-    frozen=True,
-    slots=True,
-)
-class RegisteredAvroContract:
-    group_id: str
-    artifact_id: str
-    version: str
+        resolved_version = (
+            metadata.get(
+                "version"
+            )
+        )
 
-    global_id: int
-    content_id: int
+        content_id = (
+            metadata.get(
+                "contentId"
+            )
+        )
 
-    state: str
+        global_id = (
+            metadata.get(
+                "globalId"
+            )
+        )
 
-    schema: dict[
-        str,
-        Any,
-    ]
+        state = metadata.get(
+            "state"
+        )
+
+        if (
+            resolved_group
+            != group_id
+        ):
+            raise RegistryContractError(
+                "Resolved groupId differs "
+                "from requested groupId."
+            )
+
+        if (
+            resolved_artifact
+            != artifact_id
+        ):
+            raise RegistryContractError(
+                "Resolved artifactId differs "
+                "from requested artifactId."
+            )
+
+        if (
+            resolved_version
+            != version
+        ):
+            raise RegistryContractError(
+                "Resolved version differs "
+                "from requested version."
+            )
+
+        if (
+            not isinstance(
+                content_id,
+                int,
+            )
+            or isinstance(
+                content_id,
+                bool,
+            )
+            or content_id <= 0
+        ):
+            raise RegistryContractError(
+                "Invalid contentId returned "
+                "by Apicurio."
+            )
+
+        if (
+            not isinstance(
+                global_id,
+                int,
+            )
+            or isinstance(
+                global_id,
+                bool,
+            )
+        ):
+            raise RegistryContractError(
+                "Invalid globalId returned "
+                "by Apicurio."
+            )
+
+        if state not in {
+            "ENABLED",
+            "DEPRECATED",
+        }:
+            raise RegistryContractError(
+                "Unsupported artifact "
+                f"state '{state}'."
+            )
+
+        schema = self._get_json_path(
+            f"{version_path}/content"
+        )
+
+        if schema.get(
+            "type"
+        ) != "record":
+            raise RegistryContractError(
+                "Expected an Avro "
+                "record schema."
+            )
+
+        return RegisteredAvroContract(
+            group_id=group_id,
+            artifact_id=artifact_id,
+            version=version,
+            global_id=global_id,
+            content_id=content_id,
+            state=state,
+            schema=schema,
+        )
+
+    def _get_json_path(
+        self,
+        path: str,
+    ) -> dict[str, Any]:
+        """
+        Executa GET no Registry e exige
+        resposta JSON object.
+        """
+
+        url = (
+            f"{self._base_url}/"
+            f"{path.lstrip('/')}"
+        )
+
+        request = Request(
+            url=url,
+            method="GET",
+            headers={
+                "Accept": (
+                    "application/json"
+                ),
+            },
+        )
+
+        try:
+            with urlopen(
+                request,
+                timeout=self._timeout,
+            ) as response:
+                body = response.read()
+
+        except HTTPError as exc:
+            response_body = (
+                exc.read()
+                .decode(
+                    "utf-8",
+                    errors="replace",
+                )
+            )
+
+            raise RegistryError(
+                "Apicurio request failed: "
+                f"GET {url} -> "
+                f"HTTP {exc.code}. "
+                f"Response: {response_body}"
+            ) from exc
+
+        except URLError as exc:
+            raise RegistryError(
+                "Could not reach "
+                "Apicurio Registry at "
+                f"'{url}': {exc.reason}"
+            ) from exc
+
+        try:
+            result = json.loads(
+                body.decode(
+                    "utf-8"
+                )
+            )
+
+        except (
+            UnicodeDecodeError,
+            json.JSONDecodeError,
+        ) as exc:
+            raise RegistryContractError(
+                "Apicurio returned "
+                "invalid JSON for "
+                f"GET {url}."
+            ) from exc
+
+        if not isinstance(
+            result,
+            dict,
+        ):
+            raise RegistryContractError(
+                "Registry response must "
+                "be a JSON object."
+            )
+
+        return result
