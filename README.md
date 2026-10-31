@@ -252,24 +252,38 @@ O IMS não busca apenas demonstrar tecnologias. Seu propósito é demonstrar com
      |     └── README.md
      |
      |
-     └── processing-service/
-            ├── config/
-            |     └── context_inference.yaml
-            |
+     ├── processing-service/
+     |      ├── config/
+     |      |     └── context_inference.yaml
+     |      |
+     |      ├── src/
+     |      │     ├── __init__.py
+     |      │     ├── contract.py
+     |      │     ├── apicurio_wire.py
+     |      │     ├── registry_client.py
+     |      │     ├── avro_codec.py
+     |      │     ├── telemetry_decoder.py
+     |      │     ├── kafka_consumer.py
+     |      │     └── main.py
+     |      |
+     |      ├── tests/
+     |      │     ├── test_kafka_consumer.py
+     |      │     └── test_processing_consumer_integration.py
+     |      |
+     |      └── pyproject.toml
+     |
+     |
+     └── persistence-service/
             ├── src/
-            │     ├── __init__.py
-            │     ├── contract.py
-            │     ├── apicurio_wire.py
-            │     ├── registry_client.py
-            │     ├── avro_codec.py
-            │     ├── telemetry_decoder.py
-            │     ├── kafka_consumer.py
-            │     └── main.py
+            │    └── persistence_service/
+            │          ├── __init__.py
+            │          ├── contract.py
+            │          └── telemetry_repository.py
             |
             ├── tests/
-            │     ├── test_kafka_consumer.py
-            │     └── test_processing_consumer_integration.py
+            │    └── test_telemetry_repository_integration.py
             |
             └── pyproject.toml
+
 
 ````
